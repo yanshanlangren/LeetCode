@@ -1,5 +1,7 @@
 package elvis.leetcode;
 
+import elvis.leetcode.model.ListNode;
+
 import java.util.HashMap;
 
 public class DeleteDuplicates {

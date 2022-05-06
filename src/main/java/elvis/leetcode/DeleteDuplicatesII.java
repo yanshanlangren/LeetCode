@@ -1,5 +1,7 @@
 package elvis.leetcode;
 
+import elvis.leetcode.model.ListNode;
+
 public class DeleteDuplicatesII {
     public ListNode deleteDuplicates(ListNode head) {
         if (head == null || head.next == null)

@@ -19,6 +19,7 @@ public class ApigatewayTester {
         final String url = "http://139.198.21.67:9080/test";
 //        final String url = "http://192.168.0.60:9999/test";
 //        final String url = "http://192.168.0.6:9080/test1";
+//        final String url = "http://139.198.9.241:9080/test";
         ExecutorService pool = Executors.newCachedThreadPool();
         long t0 = System.currentTimeMillis();
         AtomicInteger succ = new AtomicInteger(0);

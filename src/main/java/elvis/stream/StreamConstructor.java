@@ -70,7 +70,10 @@ public class StreamConstructor {
 
     //打印所有年龄
     public static void getAllAges(){
-        List<Integer> ages = list.stream().map(u->u.getAge()).collect(Collectors.toList());
+        List<Integer> ages = list
+                .stream()
+                .map(User::getAge)
+                .collect(Collectors.toList());
         ages.forEach(a->System.out.println(a));
     }
 
@@ -112,11 +115,11 @@ public class StreamConstructor {
 
 //        statistics();
 
-//        getAllAges();
+        getAllAges();
 
 //        toUpperCase();
 
-        findFirst();
+//        findFirst();
 
     }
 }
