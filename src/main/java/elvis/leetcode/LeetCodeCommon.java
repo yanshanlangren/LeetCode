@@ -446,10 +446,69 @@ public class LeetCodeCommon {
         }
     }
 
+    public static int getMaxFreqDeviation(String s) {
+        // Write your code here
+        if (s == null || s.length() == 0) {
+            return 0;
+        }
+        int[] m, tmp = new int[26];
+        int res = 0;
+        for (int i = 0; i < s.length(); i++) {
+            m = new int[26];
+            for (int j = 0; j < i; j++) {
+                m[s.charAt(j) - 'a']++;
+            }
+            for (int j = i; j < s.length(); j++) {
+                int max = Integer.MIN_VALUE, min = Integer.MAX_VALUE;
+                m[s.charAt(j) - 'a']++;
+                for (int k = 0; k < 26; k++) {
+                    if (m[k] > 0 && min > m[k])
+                        min = m[k];
+                    if (m[k] > 0 && max < m[k])
+                        max = m[k];
+                }
+
+                if (max - min > res)
+                    res = max - min;
+            }
+        }
+        return res;
+    }
+
+    public static int minSwapsRequired(String s) {
+        // Write your code here
+        int c0 = 0, c1 = 0, h0 = 0, i;
+        char[] ca = s.toCharArray();
+        for (i = 0; i < ca.length / 2; i++) {
+            if (ca[i] == '0') {
+                h0++;
+                c0++;
+            } else if (ca[i] == '1') {
+                c1++;
+            }
+        }
+        for (; i < ca.length; i++) {
+            if (ca[i] == '0') {
+                c0++;
+            } else if (ca[i] == '1') {
+                c1++;
+            }
+        }
+        if (ca.length % 2 == 0) {
+            if (c0 % 2 == 1 || c1 % 2 == 1)
+                return -1;
+            else
+                return c0 / 2 - h0;
+        } else {
+
+        }
+        return -1;
+    }
+
     public static void main(String[] args) {
         LeetCodeCommon l = new LeetCodeCommon();
-        l.mergeKLists(new ListNode[]{new ListNode(1, new ListNode(4, new ListNode(5))), new ListNode(1, new ListNode(3, new ListNode(4))), new ListNode(2, new ListNode(6))});
-        LinkedHashMap m = new LinkedHashMap<>();
+        System.out.println(getMaxFreqDeviation(new String("bbacccabab")));
+//        LinkedHashMap m = new LinkedHashMap<>();
 //        System.out.println(l.canJump(new int[]{2, 3, 1, 1, 4}));
 //        l.searchRange(new int[]{5, 7, 7, 8, 8, 10}, 6);
 //        l.searchRange(new int[]{2, 2}, 2);
