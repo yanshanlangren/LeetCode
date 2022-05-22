@@ -17,15 +17,13 @@ public class LowerLock {
 
         new Thread() {
             @Override
-            public void run(){
+            public void run() {
                 lock.writeLock().lock();
                 System.out.print("I got write lock");
                 lock.writeLock().unlock();
             }
         }.start();
         Thread.sleep(3000);
-
-
 
 
         lock.readLock().lock();

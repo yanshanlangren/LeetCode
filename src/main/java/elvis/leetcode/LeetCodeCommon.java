@@ -19,10 +19,8 @@ public class LeetCodeCommon {
     public int singleNumber(int[] nums) {
         Map<Integer, Integer> m = new HashMap<>();
         for (int i : nums) {
-            if (m.containsKey(i))
-                m.remove(i);
-            else
-                m.put(i, 1);
+            if (m.containsKey(i)) m.remove(i);
+            else m.put(i, 1);
         }
         return m.keySet().stream().findAny().get();
     }
@@ -32,8 +30,7 @@ public class LeetCodeCommon {
         while (fast != null && slow != null) {
             fast = fast.next.next;
             slow = slow.next;
-            if (fast == slow)
-                return true;
+            if (fast == slow) return true;
         }
         return false;
     }
@@ -61,8 +58,7 @@ public class LeetCodeCommon {
             slow = slow.next;
         }
         while (slow != null) {
-            if (s.empty() || s.pop() != slow.val)
-                return false;
+            if (s.empty() || s.pop() != slow.val) return false;
             slow = slow.next;
         }
         return true;
@@ -72,8 +68,7 @@ public class LeetCodeCommon {
         int i = 0, j = 0;
         while (i < nums.length && j < nums.length) {
             if (nums[j] != 0) {
-                if (i != j)
-                    nums[i] = nums[j];
+                if (i != j) nums[i] = nums[j];
                 i++;
             }
             j++;
@@ -87,8 +82,7 @@ public class LeetCodeCommon {
     public int hammingDistance(int x, int y) {
         int num = x ^ y, n = 0;
         while (num > 0) {
-            if ((num & 1) == 1)
-                n++;
+            if ((num & 1) == 1) n++;
             num >>= 1;
         }
         return n;
@@ -103,12 +97,10 @@ public class LeetCodeCommon {
     int max;
 
     public int maxDepth(TreeNode node) {
-        if (node == null)
-            return -1;
+        if (node == null) return -1;
         int left = maxDepth(node.left) + 1;
         int right = maxDepth(node.right) + 1;
-        if (max < left + right)
-            max = left + right;
+        if (max < left + right) max = left + right;
         return Math.max(left, right);
     }
 
@@ -116,16 +108,14 @@ public class LeetCodeCommon {
         Arrays.sort(nums);
         List<List<Integer>> res = new ArrayList<>();
         for (int i = 0; i < nums.length; i++) {
-            while (i > 0 && i < nums.length && nums[i] == nums[i - 1])
-                i++;
+            while (i > 0 && i < nums.length && nums[i] == nums[i - 1]) i++;
             Map<Integer, Integer> map = new HashMap<>();
             for (int j = i + 1; j < nums.length; j++) {
                 if (map.containsKey(nums[j]) && map.get(nums[j]) != -1) {
                     res.add(new ArrayList<>(Arrays.asList(nums[i], nums[map.get(nums[j])], nums[j])));
                     map.put(nums[j], -1);
                 }
-                if (!map.containsKey(nums[j]))
-                    map.put(-nums[i] - nums[j], j);
+                if (!map.containsKey(nums[j])) map.put(-nums[i] - nums[j], j);
             }
         }
         return res;
@@ -142,8 +132,7 @@ public class LeetCodeCommon {
     }
 
     public void generate(String pattern, int c1, int c2) {
-        if (c1 > n || c2 > n || c2 > c1)
-            return;
+        if (c1 > n || c2 > n || c2 > c1) return;
         if (c1 == n && c2 == n) {
             res.add(pattern);
             return;
@@ -197,14 +186,11 @@ public class LeetCodeCommon {
     }
 
     public void fastSort(int[] nums, int i, int j) {
-        if (i >= j)
-            return;
+        if (i >= j) return;
         int low = i + 1, high = j;
         while (low < high) {
-            while (low < high && nums[high] > nums[i])
-                high--;
-            while (low < high && nums[low] <= nums[i])
-                low++;
+            while (low < high && nums[high] > nums[i]) high--;
+            while (low < high && nums[low] <= nums[i]) low++;
             if (high != low) {
                 int temp = nums[high];
                 nums[high] = nums[low];
@@ -221,10 +207,8 @@ public class LeetCodeCommon {
     public int search(int[] nums, int target) {
         int high = nums.length - 1, low = 0;
         while (high > low) {
-            if (nums[(high + low) / 2] > nums[low])
-                low = (high + low) / 2;
-            else if (nums[(high + low) / 2] < nums[high])
-                high = (high + low) / 2;
+            if (nums[(high + low) / 2] > nums[low]) low = (high + low) / 2;
+            else if (nums[(high + low) / 2] < nums[high]) high = (high + low) / 2;
             else break;
         }
         int mid = high;
@@ -232,17 +216,14 @@ public class LeetCodeCommon {
         low = mid;
         while (high != low) {
             int c = (high + (high > low ? 0 : nums.length) + low) / 2 % nums.length;
-            if (nums[c] < target)
-                low = c;
-            else
-                high = c;
+            if (nums[c] < target) low = c;
+            else high = c;
         }
         return nums[high] == target ? high : -1;
     }
 
     public int[] searchRange(int[] nums, int target) {
-        if (nums.length == 0)
-            return new int[]{-1, -1};
+        if (nums.length == 0) return new int[]{-1, -1};
         int L = 0, R = nums.length - 1, start = 0, end = 0, c = -1;
         while (L < R) {
             c = (L + R) / 2;
@@ -254,8 +235,7 @@ public class LeetCodeCommon {
                 break;
             }
         }
-        if (nums[L] != target)
-            return new int[]{-1, -1};
+        if (nums[L] != target) return new int[]{-1, -1};
         int high = c, low = L;
         while (low < high) {
             if (nums[(low + high) / 2] == target) {
@@ -300,8 +280,7 @@ public class LeetCodeCommon {
             list.add(l);
             return;
         }
-        if (i >= candidates.length)
-            return;
+        if (i >= candidates.length) return;
         for (int j = 0; total + j * candidates[i] <= target; j++) {
             int[] x = new int[i + 1];
             System.arraycopy(choice, 0, x, 0, choice.length);
@@ -347,14 +326,11 @@ public class LeetCodeCommon {
     }
 
     public void sorted(char[] ca, int start, int end) {
-        if (start >= end)
-            return;
+        if (start >= end) return;
         int l = start + 1, r = end;
         while (l < r) {
-            while (l < r && ca[l] <= ca[start])
-                l++;
-            while (l < r && ca[r] > ca[start])
-                r--;
+            while (l < r && ca[l] <= ca[start]) l++;
+            while (l < r && ca[r] > ca[start]) r--;
             if (l < r) {
                 char tmp = ca[l];
                 ca[l] = ca[r];
@@ -382,8 +358,7 @@ public class LeetCodeCommon {
                     status[next + i] = true;
                     q.offer(next + i);
                 }
-                if (next + i == nums.length - 1)
-                    return true;
+                if (next + i == nums.length - 1) return true;
             }
         }
         return status[nums.length - 1];
@@ -419,27 +394,22 @@ public class LeetCodeCommon {
     }
 
     public ListNode mergeLists(ListNode l, ListNode[] lists, int s, int e) {
-        if (e - s == 0)
-            return l;
+        if (e - s == 0) return l;
         else if (e - s == 1) {
             ListNode l1 = l, l2 = lists[s], pre = null;
             while (l1 != null && l2 != null) {
                 if (l2.val < l1.val) {
-                    if (pre != null)
-                        pre.next = l2;
+                    if (pre != null) pre.next = l2;
                     pre = l2;
                     l2 = l2.next;
                 } else {
-                    if (pre != null)
-                        pre.next = l1;
+                    if (pre != null) pre.next = l1;
                     pre = l1;
                     l1 = l1.next;
                 }
             }
-            if (l1 != null)
-                pre.next = l1;
-            if (l2 != null)
-                pre.next = l2;
+            if (l1 != null) pre.next = l1;
+            if (l2 != null) pre.next = l2;
             return l;
         } else {
             return mergeLists(mergeLists(l, lists, s, s + 1), lists, s + 1, e);
@@ -462,14 +432,11 @@ public class LeetCodeCommon {
                 int max = Integer.MIN_VALUE, min = Integer.MAX_VALUE;
                 m[s.charAt(j) - 'a']++;
                 for (int k = 0; k < 26; k++) {
-                    if (m[k] > 0 && min > m[k])
-                        min = m[k];
-                    if (m[k] > 0 && max < m[k])
-                        max = m[k];
+                    if (m[k] > 0 && min > m[k]) min = m[k];
+                    if (m[k] > 0 && max < m[k]) max = m[k];
                 }
 
-                if (max - min > res)
-                    res = max - min;
+                if (max - min > res) res = max - min;
             }
         }
         return res;
@@ -495,19 +462,39 @@ public class LeetCodeCommon {
             }
         }
         if (ca.length % 2 == 0) {
-            if (c0 % 2 == 1 || c1 % 2 == 1)
-                return -1;
-            else
-                return c0 / 2 - h0;
+            if (c0 % 2 == 1 || c1 % 2 == 1) return -1;
+            else return c0 / 2 - h0;
         } else {
 
         }
         return -1;
     }
 
+    public int mySqrt(int x) {
+        if (x == 0)
+            return 0;
+        int L = 1, H = x;
+        while (H > L + 1) {
+            int mid = (L + H) / 2;
+            if (mid <= x/mid)
+                L = mid;
+            else
+                H = mid;
+        }
+        return L;
+    }
+
     public static void main(String[] args) {
         LeetCodeCommon l = new LeetCodeCommon();
-        System.out.println(getMaxFreqDeviation(new String("bbacccabab")));
+        List<Integer> list = new ArrayList<>();
+        list.add(2);
+        list.add(3);
+        System.out.println(list);
+        list.remove(new Integer(3));
+        System.out.println(list);
+
+//        System.out.println(getMaxFreqDeviation(new String("bbacccabab")));
+
 //        LinkedHashMap m = new LinkedHashMap<>();
 //        System.out.println(l.canJump(new int[]{2, 3, 1, 1, 4}));
 //        l.searchRange(new int[]{5, 7, 7, 8, 8, 10}, 6);
