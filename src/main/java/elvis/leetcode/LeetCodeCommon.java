@@ -476,12 +476,21 @@ public class LeetCodeCommon {
         int L = 1, H = x;
         while (H > L + 1) {
             int mid = (L + H) / 2;
-            if (mid <= x/mid)
+            if (mid <= x / mid)
                 L = mid;
             else
                 H = mid;
         }
         return L;
+    }
+
+    public String convertToTitle(int columnNumber) {
+        StringBuilder col = new StringBuilder();
+        while (columnNumber > 0) {
+            col.append((char) ((columnNumber - 1) % 26 + 'A'));
+            columnNumber /= 26;
+        }
+        return col.toString();
     }
 
     public static void main(String[] args) {
@@ -492,6 +501,7 @@ public class LeetCodeCommon {
         System.out.println(list);
         list.remove(new Integer(3));
         System.out.println(list);
+        String a = "asda";
 
 //        System.out.println(getMaxFreqDeviation(new String("bbacccabab")));
 
