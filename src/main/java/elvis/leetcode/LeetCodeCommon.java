@@ -1,5 +1,6 @@
 package elvis.leetcode;
 
+import elvis.interfaces.LamdaInterfaceTest;
 import elvis.leetcode.model.ListNode;
 
 import java.util.*;
@@ -471,15 +472,12 @@ public class LeetCodeCommon {
     }
 
     public int mySqrt(int x) {
-        if (x == 0)
-            return 0;
+        if (x == 0) return 0;
         int L = 1, H = x;
         while (H > L + 1) {
             int mid = (L + H) / 2;
-            if (mid <= x / mid)
-                L = mid;
-            else
-                H = mid;
+            if (mid <= x / mid) L = mid;
+            else H = mid;
         }
         return L;
     }
@@ -493,15 +491,74 @@ public class LeetCodeCommon {
         return col.toString();
     }
 
+    public boolean isHappy(int n) {
+        int fast = n;
+        int slow = n;
+        do {
+            fast = isHappySum(isHappySum(fast));
+            slow = isHappySum(slow);
+        } while (fast != slow && fast != 1 && slow != 1);
+        return fast == 1 || slow == 1;
+    }
+
+    public int isHappySum(int n) {
+        int sum = 0;
+        while (n > 0) {
+            int a = n % 10;
+            sum += a * a;
+            n /= 10;
+        }
+        return sum;
+    }
+
+    public int searchInsert(int[] nums, int target) {
+        if (target > nums[nums.length - 1])
+            return nums.length;
+        if (target < nums[0])
+            return 0;
+        int l = 0, h = nums.length - 1;
+        while (l < h) {
+            int mid = (l + h) / 2;
+            if (nums[mid] < target) {
+                l = mid + 1;
+            } else if (nums[mid] > target) {
+                h = mid;
+            } else {
+                return mid;
+            }
+        }
+        return l;
+    }
+
+    public List<String> summaryRanges(int[] nums) {
+        List<String> res = new ArrayList<>();
+        if (nums.length == 0)
+            return res;
+        int tmp = nums[0];
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] - nums[i - 1] != 1) {
+                if (nums[i - 1] > tmp)
+                    res.add(tmp + "->" + nums[i - 1]);
+                else
+                    res.add(String.valueOf(tmp));
+                tmp = nums[i];
+            }
+        }
+        if (nums[nums.length - 1] == tmp)
+            res.add(String.valueOf(tmp));
+        else
+            res.add(tmp + "->" + nums[nums.length - 1]);
+        return res;
+    }
+
+
     public static void main(String[] args) {
         LeetCodeCommon l = new LeetCodeCommon();
-        List<Integer> list = new ArrayList<>();
-        list.add(2);
-        list.add(3);
-        System.out.println(list);
-        list.remove(new Integer(3));
-        System.out.println(list);
-        String a = "asda";
+//        System.out.println(l.summaryRanges(new int[]{-2147483648, -2147483647, 2147483647}));
+        System.out.println(Integer.MAX_VALUE);
+        System.out.println(Integer.MIN_VALUE);
+        System.out.println(Integer.MAX_VALUE - Integer.MIN_VALUE);
+//        System.out.println(Integer.MIN_VALUE);
 
 //        System.out.println(getMaxFreqDeviation(new String("bbacccabab")));
 
