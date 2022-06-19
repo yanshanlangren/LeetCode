@@ -1,10 +1,9 @@
 package elvis.leetcode;
 
-import elvis.interfaces.LamdaInterfaceTest;
 import elvis.leetcode.model.ListNode;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 
 public class LeetCodeCommon {
     public int maxProfit(int[] prices) {
@@ -512,10 +511,8 @@ public class LeetCodeCommon {
     }
 
     public int searchInsert(int[] nums, int target) {
-        if (target > nums[nums.length - 1])
-            return nums.length;
-        if (target < nums[0])
-            return 0;
+        if (target > nums[nums.length - 1]) return nums.length;
+        if (target < nums[0]) return 0;
         int l = 0, h = nums.length - 1;
         while (l < h) {
             int mid = (l + h) / 2;
@@ -530,34 +527,95 @@ public class LeetCodeCommon {
         return l;
     }
 
-    public List<String> summaryRanges(int[] nums) {
-        List<String> res = new ArrayList<>();
-        if (nums.length == 0)
-            return res;
-        int tmp = nums[0];
-        for (int i = 1; i < nums.length; i++) {
-            if (nums[i] - nums[i - 1] != 1) {
-                if (nums[i - 1] > tmp)
-                    res.add(tmp + "->" + nums[i - 1]);
-                else
-                    res.add(String.valueOf(tmp));
-                tmp = nums[i];
-            }
+//    public List<String> summaryRanges(int[] nums) {
+//        List<String> res = new ArrayList<>();
+//        if (nums.length == 0)
+//            return res;
+//        int tmp = nums[0];
+//        for (int i = 1; i < nums.length; i++) {
+//            if (nums[i] - nums[i - 1] != 1) {
+//                if (nums[i - 1] > tmp)
+//                    res.add(tmp + "->" + nums[i - 1]);
+//                else
+//                    res.add(String.valueOf(tmp));
+//                tmp = nums[i];
+//            }
+//        }
+//        if (nums[nums.length - 1] == tmp)
+//            res.add(String.valueOf(tmp));
+//        else
+//            res.add(tmp + "->" + nums[nums.length - 1]);
+//        return res;
+//    }
+
+    List<List<Integer>> res1;
+
+    public List<String> binaryTreePaths(TreeNode root) {
+        res1 = new ArrayList<>();
+        List<Integer> list = new ArrayList<>();
+        res1.add(list);
+        if (root != null) {
+            list.add(root.val);
+            traverse(list, root);
         }
-        if (nums[nums.length - 1] == tmp)
-            res.add(String.valueOf(tmp));
-        else
-            res.add(tmp + "->" + nums[nums.length - 1]);
-        return res;
+        List<String> ret = new ArrayList<>();
+        for (List<Integer> l : res1) {
+            StringBuilder sb = new StringBuilder();
+            for (Integer s : l) {
+                sb.append(s);
+                sb.append("->");
+            }
+            if (sb.length() > 0) {
+                sb.delete(sb.length() - 2, sb.length());
+            }
+            ret.add(sb.toString());
+        }
+        return ret;
     }
 
+    public void traverse(List<Integer> cur, TreeNode node) {
+        if (node.left == null && node.right == null) {
+            return;
+        }
+        if (node.left != null && node.right != null) {
+            List<Integer> list = new ArrayList<>(cur);
+            res1.add(list);
+            list.add(node.left.val);
+            cur.add(node.right.val);
+            traverse(list, node.left);
+            traverse(cur, node.right);
+            return;
+        }
+        if (node.left != null) {
+            cur.add(node.left.val);
+            traverse(cur, node.left);
+            return;
+        }
+        cur.add(node.right.val);
+        traverse(cur, node.right);
+        return;
+    }
 
     public static void main(String[] args) {
         LeetCodeCommon l = new LeetCodeCommon();
+        List<String> dates = new ArrayList<>();
+//        dates.replaceAll();
+        Function<Integer, Integer> lambda = x-> x * x;
+//        HashSet<Integer> s= new HashSet<>();
+//        int[] a = s.stream().mapToInt(x -> x.intValue()).toArray();
+//        int x=0;
+//        for(int i=0;i<5;i++){
+//            x^=i;
+//            System.out.println(x);
+//        }
+//        TreeNode root = new TreeNode(1, new TreeNode(2), new TreeNode(3, new TreeNode(4), null));
+//        System.out.println(l.binaryTreePaths(root));
 //        System.out.println(l.summaryRanges(new int[]{-2147483648, -2147483647, 2147483647}));
-        System.out.println(Integer.MAX_VALUE);
-        System.out.println(Integer.MIN_VALUE);
-        System.out.println(Integer.MAX_VALUE - Integer.MIN_VALUE);
+//        System.out.println(Integer.MAX_VALUE);
+//        System.out.println(Integer.MIN_VALUE);
+//        System.out.println(Integer.MAX_VALUE - Integer.MIN_VALUE);
+//        StringBuilder sb = new StringBuilder();
+//        sb.delete(sb.length() - 2, sb.length() - 1);
 //        System.out.println(Integer.MIN_VALUE);
 
 //        System.out.println(getMaxFreqDeviation(new String("bbacccabab")));
