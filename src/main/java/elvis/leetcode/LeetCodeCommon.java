@@ -610,10 +610,72 @@ public class LeetCodeCommon {
 //        }
 //        TreeNode root = new TreeNode(1, new TreeNode(2), new TreeNode(3, new TreeNode(4), null));
 //        System.out.println(l.binaryTreePaths(root));
+
+
+    public int[][] spiralArray(int x) {
+        // find square
+        // if x is a int square
+        int kaifang = (int) Math.pow(x, 0.5);
+        int row;
+        if (kaifang * kaifang == x) {
+            row = kaifang;
+        } else {
+            row = kaifang + 1;
+        }
+
+        //build int array
+        int i = (row - 1) / 2, j = (row - 1) / 2;
+        int[][] res = new int[row][row];
+        int count = 1;
+        int direction = 0; // 0 - right, 1 - down, 2-left, 3-up
+        while (count <= x) {
+            //System.out.println(count+", "+ direction+", "+i+", "+ j);
+            res[i][j] = count++;
+            switch (direction) {
+                case 0:
+                    j++;
+                    if (j < row && i + 1 < row && res[i + 1][j] == 0) {
+                        direction = 1;
+                    }
+                    break;
+                case 1:
+                    i++;
+                    if (i < row && j - 1 >= 0 && res[i][j - 1] == 0) {
+                        direction = 2;
+                    }
+                    break;
+                case 2:
+                    j--;
+                    if (j >= 0 && i - 1 >= 0 && res[i - 1][j] == 0) {
+                        direction = 3;
+                    }
+                    break;
+                case 3:
+                    i--;
+                    if (i >= 0 && j + 1 < row && res[i][j + 1] == 0) {
+                        direction = 0;
+                    }
+                    break;
+            }
+        }
+
+        return res;
+    }
+
+
+    public static void main(String[] args) {
+        LeetCodeCommon l = new LeetCodeCommon();
+        int[][] res = l.spiralArray(4);
+        for (int[] re : res) {
+            for (int j = 0; j < res.length; j++)
+                System.out.print(re[j] + " ");
+            System.out.println("");
+        }
 //        System.out.println(l.summaryRanges(new int[]{-2147483648, -2147483647, 2147483647}));
 //        System.out.println(Integer.MAX_VALUE);
 //        System.out.println(Integer.MIN_VALUE);
 //        System.out.println(Integer.MAX_VALUE - Integer.MIN_VALUE);
+
 //        StringBuilder sb = new StringBuilder();
 //        sb.delete(sb.length() - 2, sb.length() - 1);
 //        System.out.println(Integer.MIN_VALUE);
