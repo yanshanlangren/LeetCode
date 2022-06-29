@@ -1,4 +1,4 @@
-package elvis.deadlock;
+package elvis.concurrent.deadlock;
 
 /**
  * 死锁

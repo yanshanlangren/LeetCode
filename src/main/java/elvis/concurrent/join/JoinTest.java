@@ -1,4 +1,4 @@
-package elvis.join;
+package elvis.concurrent.join;
 
 public class JoinTest extends Thread {
     public int n = 0;

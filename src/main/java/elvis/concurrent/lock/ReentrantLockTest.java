@@ -1,4 +1,4 @@
-package elvis.lock;
+package elvis.concurrent.lock;
 
 import java.util.concurrent.locks.ReentrantLock;
 

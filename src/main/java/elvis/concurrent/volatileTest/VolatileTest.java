@@ -1,4 +1,4 @@
-package elvis.volatileTest;
+package elvis.concurrent.volatileTest;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

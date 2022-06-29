@@ -1,4 +1,4 @@
-package elvis.lock;
+package elvis.concurrent.lock;
 
 /**
  * 读锁不能升级为写锁(读写锁已经读锁, 不能再写锁)
