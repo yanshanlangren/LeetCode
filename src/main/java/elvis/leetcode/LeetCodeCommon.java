@@ -3,7 +3,7 @@ package elvis.leetcode;
 import elvis.leetcode.model.ListNode;
 
 import java.util.*;
-import java.util.function.Function;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class LeetCodeCommon {
     public int maxProfit(int[] prices) {
@@ -596,22 +596,6 @@ public class LeetCodeCommon {
         return;
     }
 
-    public static void main(String[] args) {
-        LeetCodeCommon l = new LeetCodeCommon();
-        List<String> dates = new ArrayList<>();
-//        dates.replaceAll();
-        Function<Integer, Integer> lambda = x-> x * x;
-//        HashSet<Integer> s= new HashSet<>();
-//        int[] a = s.stream().mapToInt(x -> x.intValue()).toArray();
-//        int x=0;
-//        for(int i=0;i<5;i++){
-//            x^=i;
-//            System.out.println(x);
-//        }
-//        TreeNode root = new TreeNode(1, new TreeNode(2), new TreeNode(3, new TreeNode(4), null));
-//        System.out.println(l.binaryTreePaths(root));
-
-
     public int[][] spiralArray(int x) {
         // find square
         // if x is a int square
@@ -662,15 +646,145 @@ public class LeetCodeCommon {
         return res;
     }
 
+    public int thirdMax(int[] nums) {
+        PriorityQueue<Integer> q = new PriorityQueue<>();
+        HashSet<Integer> set = new HashSet<>();
+        for (int num : nums) {
+            if (!set.contains(num)) {
+                q.offer(num);
+                if (q.size() > 3) {
+                    q.poll();
+                }
+                set.add(num);
+            }
+        }
+        if (q.size() == 2) {
+            q.poll();
+            return q.peek();
+        }
+        return q.peek();
+    }
+
+    public String addStrings(String num1, String num2) {
+        int i = num1.length() - 1, j = num2.length() - 1;
+        int c = 0;
+        StringBuilder s = new StringBuilder();
+        while (i >= 0 || j >= 0) {
+            if (i >= 0) {
+                c += num1.charAt(i) - '0';
+                i--;
+            }
+            if (j >= 0) {
+                c += num2.charAt(j) - '0';
+                j--;
+            }
+            s.append(c % 10);
+            c /= 10;
+        }
+        if (c > 0) s.append(c);
+        return s.reverse().toString();
+    }
+
+    public int islandPerimeter(int[][] grid) {
+        int row = grid.length;
+        int col = grid[0].length;
+        int count = 0;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (grid[i][j] == 1) {
+                    count += ((i + 1 >= row || grid[i + 1][j] == 0)) ? 1 : 0;
+                    count += ((j + 1 >= col || grid[i][j + 1] == 0) ? 1 : 0);
+                    count += ((i - 1 < 0 || grid[i - 1][j] == 0) ? 1 : 0);
+                    count += ((j - 1 < 0 || grid[i][j - 1] == 0) ? 1 : 0);
+                }
+            }
+        }
+        return count;
+    }
+
+    public int findComplement(int num) {
+        //有效位数
+        int n = 0;
+        int t = num;
+        while (t != 0) {
+            t >>= 1;
+            n++;
+        }
+        num = ~num;
+        num <<= (32 - n);
+        num >>= (32 - n);
+        return num;
+    }
+
+    public String licenseKeyFormatting(String s, int k) {
+        StringBuilder sb = new StringBuilder(s.toUpperCase(Locale.ROOT));
+        int count = 0;
+        for (int i = 0; i < sb.length(); i++) {
+            if (sb.charAt(i) == '-') {
+                if (count <= k) {
+                    sb.deleteCharAt(i);
+                    i--;
+                } else {
+                    count = 0;
+                }
+            } else {
+                count++;
+            }
+        }
+        return sb.toString();
+    }
+
+    public static void plusMinus(List<Integer> arr) {
+        // Write your code here
+        int[] res = new int[3];
+        arr.forEach(x -> {
+            if (x > 0) {
+                res[2]++;
+            } else if (x < 0) {
+                res[0]++;
+            } else res[1]++;
+        });
+        double total = res[0] + res[1] + res[2];
+        System.out.println((double) res[0] / total);
+        System.out.println((double) res[1] / total);
+        System.out.println((double) res[2] / total);
+    }
+
+    public static void miniMaxSum(List<Integer> arr) {
+        // Write your code here
+        AtomicInteger max = new AtomicInteger(Integer.MIN_VALUE);
+        AtomicInteger min = new AtomicInteger(Integer.MAX_VALUE);
+        long total = arr.stream().peek(x -> {
+            max.set(Math.max(max.get(), x));
+            min.set(Math.min(min.get(), x));
+        }).map(x -> (long) x).reduce(0L, Long::sum);
+        System.out.println((total - max.get()) + " " + (total - min.get()));
+    }
+
+    public static String timeConversion(String s) {
+        // Write your code here
+        String AP = s.substring(s.length() - 2, s.length());
+        int hour = Integer.parseInt(s.substring(0, 2));
+        if (AP.equals("AM")) {
+            if (hour == 12) {
+                hour = 0;
+            }
+        } else {
+            if (hour != 12) {
+                hour += 12;
+            }
+        }
+        return (hour < 10 ? "0" : "") + hour + s.substring(2, s.length() - 2);
+    }
+
 
     public static void main(String[] args) {
-        LeetCodeCommon l = new LeetCodeCommon();
-        int[][] res = l.spiralArray(4);
-        for (int[] re : res) {
-            for (int j = 0; j < res.length; j++)
-                System.out.print(re[j] + " ");
-            System.out.println("");
-        }
+        System.out.println(timeConversion("12:00:00AM"));
+//        miniMaxSum(new ArrayList<>(Arrays.asList(256741038, 623958417, 467905213, 714532089, 938071625)));
+//        LeetCodeCommon l = new LeetCodeCommon();
+//        int a = (int) (Math.sqrt(10) +1);
+//        System.out.println(l.addStrings("999", "1"));
+//        System.out.println(l.islandPerimeter(new int[][]{{1, 1}}));
 //        System.out.println(l.summaryRanges(new int[]{-2147483648, -2147483647, 2147483647}));
 //        System.out.println(Integer.MAX_VALUE);
 //        System.out.println(Integer.MIN_VALUE);
