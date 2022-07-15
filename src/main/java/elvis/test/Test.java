@@ -2,6 +2,7 @@ package elvis.test;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.PriorityQueue;
 import java.util.stream.Collectors;
 
@@ -105,20 +106,20 @@ public class Test {
     }
 
     public static void main(String[] args) {
-
-        HashMap<String, List<String>> m = new HashMap<>();
-        m.values().stream().collect(Collectors.toList());
-        Test t = new Test();
-        long t0 = System.currentTimeMillis();
-
-//        System.out.println(t.minimumWindowSubstring("ADOBECODEBANC", "ABCDE"));
-//        t.testPriorityQueue();
-        String a = "abc";
-        String b = new String("abc");
-        System.out.println("abc".intern());
-        System.out.println("abc".hashCode());
-        System.out.println(b.equals(a));
-
-        System.out.println(System.currentTimeMillis() - t0 + " ms");
+        System.out.println(System.getProperty("os.name").toLowerCase(Locale.ROOT));
+//        HashMap<String, List<String>> m = new HashMap<>();
+//        m.values().stream().collect(Collectors.toList());
+//        Test t = new Test();
+//        long t0 = System.currentTimeMillis();
+//
+////        System.out.println(t.minimumWindowSubstring("ADOBECODEBANC", "ABCDE"));
+////        t.testPriorityQueue();
+//        String a = "abc";
+//        String b = new String("abc");
+//        System.out.println("abc".intern());
+//        System.out.println("abc".hashCode());
+//        System.out.println(b.equals(a));
+//
+//        System.out.println(System.currentTimeMillis() - t0 + " ms");
     }
 }
