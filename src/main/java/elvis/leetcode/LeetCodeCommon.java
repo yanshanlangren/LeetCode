@@ -4,6 +4,8 @@ import elvis.leetcode.model.ListNode;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class LeetCodeCommon {
     public int maxProfit(int[] prices) {
@@ -777,9 +779,115 @@ public class LeetCodeCommon {
         return (hour < 10 ? "0" : "") + hour + s.substring(2, s.length() - 2);
     }
 
+    public String[] findWords(String[] words) {
+        //qwertyuiop
+        //asdfghjkl
+        //zxcvbnm
+        List<String> l = new ArrayList<>();
+        int[] idx = new int[]{2, 3, 3, 2, 1, 2, 2, 2, 1, 2, 2, 2, 3, 3, 1, 1, 1, 1, 2, 1, 1, 3, 1, 3, 1, 3};
+        for (String word : words) {
+            String wd = word.toLowerCase(Locale.ROOT);
+            boolean flag = true;
+            char[] ca = wd.toCharArray();
+            for (int i = 1; i < wd.length(); i++) {
+                if (idx[ca[0] - 'a'] != idx[ca[i] - 'a']) {
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag) l.add(word);
+//            System.out.println(word);
+        }
+        return l.toArray(new String[0]);
+    }
+
+    HashMap<Integer, Integer> map;
+
+    public int[] findMode(TreeNode root) {
+        map = new HashMap<>();
+//        traverse(root);
+        int max = 0;
+        Iterator<Map.Entry<Integer, Integer>> it = map.entrySet().iterator();
+        List<Integer> l = null;
+        while (it.hasNext()) {
+            Map.Entry<Integer, Integer> entry = it.next();
+            Integer key = entry.getKey();
+            Integer value = entry.getValue();
+            if (value > max) {
+                l = new ArrayList<>();
+                l.add(key);
+            }
+        }
+        return l.stream().mapToInt(Integer::valueOf).toArray();
+
+    }
+
+    public String convertToBase7(int num) {
+        StringBuilder sb = new StringBuilder();
+        int x = num;
+        while (x != 0) {
+            sb.append(x % 7);
+            x /= 7;
+        }
+        if (num < 0) sb.append("-");
+        return sb.reverse().toString();
+    }
+
+    public boolean checkPerfectNumber(int num) {
+        if (num == 1) return false;
+        int count = 1;
+        int i = 2;
+        while (i < num) {
+            if ((num / i) * i == num) count += i;
+            i++;
+        }
+        return count == num;
+    }
+
+    public String[] findRelativeRanks(int[] score) {
+        int[] sort = new int[score.length];
+        int count = 1;
+
+        return null;
+    }
+
+    public void fastSort(int[] score, int start, int end, int[] sort) {
+        int h = end, l = start;
+        while (l < h) {
+
+        }
+    }
 
     public static void main(String[] args) {
-        System.out.println(timeConversion("12:00:00AM"));
+        LeetCodeCommon l = new LeetCodeCommon();
+        String[] res = l.findRelativeRanks(new int[]{10, 3, 8, 9, 4});
+        System.out.println(res);
+//        for (int i = 0; i < Integer.MAX_VALUE; i++) {
+//        long t0 = System.currentTimeMillis();
+//        if (l.checkPerfectNumber(33550336)) System.out.println(33550336);
+//        long t1 = System.currentTimeMillis();
+//        System.out.println(t1 - t0);
+//        }
+//        l.convertToBase7(-7);
+
+
+//        HashMap<Integer, Integer> map = new HashMap<>();
+//        Iterator<Map.Entry<Integer, Integer>> it = map.entrySet().iterator();
+//        List<Integer> list = new ArrayList<>(Arrays.asList(1, 2));
+//        while (it.hasNext()) {
+//            it.next();
+//        }
+//        String[] x = list.stream().map(String::valueOf).toArray(String[]::new);
+//        System.out.println(x);
+//        String a1 = "qwertyuiop";
+//        String a2 = "asdfghjkl";
+//        String a3 = "zxcvbnm";
+//        for (char i = 'a'; i <= 'z'; i++) {
+//            if (a1.indexOf(i) != -1) System.out.print(1 + ",");
+//            else if (a2.indexOf(i) != -1) System.out.print(2 + ",");
+//            else if (a3.indexOf(i) != -1) System.out.print(3 + ",");
+//        }
+//        System.out.println(timeConversion("12:00:00AM"));
 //        miniMaxSum(new ArrayList<>(Arrays.asList(256741038, 623958417, 467905213, 714532089, 938071625)));
 //        LeetCodeCommon l = new LeetCodeCommon();
 //        int a = (int) (Math.sqrt(10) +1);
