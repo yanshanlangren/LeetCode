@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.SocketHandler;
 
 public class Server {
     public static void main(String[] args) {
@@ -17,13 +18,17 @@ public class Server {
                 Socket s = ss.accept();
                 System.out.println("客户端:" + s.getInetAddress().getLocalHost() + "已连接到服务器");
 
+                ServerHandler socketHandler = new ServerHandler(s);
                 BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
                 //读取客户端发送来的消息
                 String mess = br.readLine();
-                System.out.println("客户端：" + mess);
-                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
-                bw.write(mess + "\n");
-                bw.flush();
+                while (mess != null && !"".equals(mess)) {
+                    System.out.println("客户端：" + mess);
+                    BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
+                    bw.write("message[" + mess + "] received\n");
+                    bw.flush();
+                    mess = br.readLine();
+                }
 //                s.close();
             }
         } catch (IOException e) {
