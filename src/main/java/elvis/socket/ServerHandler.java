@@ -8,17 +8,15 @@ import java.net.SocketAddress;
 public class ServerHandler extends Thread {
     private Socket socket;
     private SocketAddress host;
-//    private int port;
 
     public ServerHandler(Socket socket, SocketAddress host) {
         this.socket = socket;
         this.host = host;
-//        this.port = port;
     }
 
     @Override
     public void run() {
-        BufferedReader br = null;
+        BufferedReader br;
         try {
             br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String mess = br.readLine();
