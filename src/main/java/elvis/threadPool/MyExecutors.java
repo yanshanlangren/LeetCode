@@ -27,15 +27,16 @@ public class MyExecutors {
          *   ThreadFactory threadFactory, // 新线程的产生方式
          *   RejectedExecutionHandler handler) // 拒绝策略
          */
-        ThreadPoolExecutor tpe = new ThreadPoolExecutor(10, 100, 3600L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ThreadFactory() {
+        ThreadPoolExecutor tpe = new ThreadPoolExecutor(3, 5, 3600L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
+                System.out.println("creating new Thread");
                 return new Thread(r);
             }
         }, new RejectedExecutionHandler() {
             @Override
             public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
-
+                System.out.println("rejecting Thread");
             }
         });
         /**
@@ -44,17 +45,27 @@ public class MyExecutors {
          * void execute(Runnable command)       不关心返回结果
          * Future<?> submit(Runnable task)      不关心返回结果，虽然返回Future，但是其get()方法总是返回null
          */
+        //关心返回结果
         Future<Object> f = tpe.submit(new Callable<Object>() {
             @Override
             public Object call() throws Exception {
+                System.out.println("calling anonymous inner Callable");
                 return "finished";
             }
         });
-        f.get();
+        System.out.println(f.get());
+        //不关心返回结果
         tpe.execute(new Runnable() {
             @Override
             public void run() {
                 System.out.println("void execute(Runnable command) executed");
+            }
+        });
+        //不关心返回结果，虽然返回Future，但是其get()方法总是返回null
+        tpe.submit(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("calling anonymous inner Runnable");
             }
         });
     }
