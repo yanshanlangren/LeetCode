@@ -6,7 +6,7 @@ public class MyExecutors {
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         //创建固定大小的线程池
-        ExecutorService executorService = Executors.newCachedThreadPool();
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
         //创建只有一个线程的线程池
         ExecutorService executorService1 = Executors.newSingleThreadExecutor();
         //创建一个不限线程数上限的线程池，任何提交的任务都将立即执行
