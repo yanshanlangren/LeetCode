@@ -16,19 +16,28 @@ public class ServerHandler extends Thread {
 
     @Override
     public void run() {
-        BufferedReader br;
+        BufferedReader br = null;
+        BufferedWriter bw = null;
         try {
             br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String mess = br.readLine();
             while (mess != null && !"".equals(mess)) {
                 System.out.println("客户端[" + host + "]：" + mess);
-                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
                 bw.write("message[" + mess + "] received\n");
                 bw.flush();
                 mess = br.readLine();
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (bw != null) bw.close();
+                if (br != null) br.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println("客户端[" + host + "]断开连接");
         }
     }
 }

@@ -30,6 +30,12 @@ public class Server {
             while (true) {
                 Socket s = ss.accept();
                 System.out.println("客户端:" + s.getRemoteSocketAddress() + "已连接到服务器");
+
+//                s.setKeepAlive(false);
+                s.setTcpNoDelay(true);
+                s.setSoLinger(true, 0);
+                s.setOOBInline(false);
+
                 ServerHandler socketHandler = new ServerHandler(s, s.getRemoteSocketAddress());
                 tpe.submit(socketHandler);
             }
