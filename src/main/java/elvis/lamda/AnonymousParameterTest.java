@@ -1,14 +1,12 @@
 package elvis.lamda;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class AnonymousParameterTest {
 
-    public static String[] persons = new String[]{"John","Eason","Ann","Edward","Elvis","Shawn","Joey","Vincent","Sherry"};
+    public static String[] persons = new String[]{"John", "Eason", "Ann", "Edward", "Elvis", "Shawn", "Joey", "Vincent", "Sherry"};
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
 
 
         /**
@@ -41,7 +39,7 @@ public class AnonymousParameterTest {
         /**
          * 4. reduce规约
          */
-        String asd = Arrays.stream(persons).reduce("Here are my friends",(a,b)->a+","+b);
+        String asd = Arrays.stream(persons).reduce("Here are my friends", (a, b) -> a + "," + b);
         System.out.println(asd);
     }
 

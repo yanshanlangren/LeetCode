@@ -5,6 +5,7 @@ import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.client.Row;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
@@ -12,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TestCase {
+
+
 
     public static void main(String[] args) throws IOException {
         Configuration config = HBaseConfiguration.create();
@@ -93,6 +96,5 @@ public class TestCase {
 
         // 删除表
         ddl.deleteTable(conn, "test_tab");
-
     }
 }

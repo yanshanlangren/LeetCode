@@ -36,7 +36,7 @@ public class CreateTopicTest extends Thread {
         bean.setTopicName(topicName);
         bean.setPartition(1);
         bean.setReplication(1);
-        createKafaTopic(bootstrapURL, bean);
+        createKafkaTopic(bootstrapURL, bean);
     }
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -53,12 +53,12 @@ public class CreateTopicTest extends Thread {
             bean.setTopicName(topicName);
             bean.setPartition(1);
             bean.setReplication(1);
-            deleteKafaTopic(bootstrapURL, bean);
+            deleteKafkaTopic(bootstrapURL, bean);
         }
         System.out.println(LocalDateTime.now() + ": finished deleting");
     }
 
-    public static void createKafaTopic(String ZkStr, KafkaTopicBean topic) {
+    public static void createKafkaTopic(String ZkStr, KafkaTopicBean topic) {
         ZkUtils zkUtils = ZkUtils.
                 apply(ZkStr, 30000, 30000, JaasUtils.isZkSecurityEnabled());
 
@@ -67,7 +67,7 @@ public class CreateTopicTest extends Thread {
         zkUtils.close();
     }
 
-    public static void deleteKafaTopic(String ZkStr, KafkaTopicBean topic) {
+    public static void deleteKafkaTopic(String ZkStr, KafkaTopicBean topic) {
         ZkUtils zkUtils = ZkUtils.
                 apply(ZkStr, 30000, 30000, JaasUtils.isZkSecurityEnabled());
 

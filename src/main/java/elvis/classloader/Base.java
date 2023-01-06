@@ -14,11 +14,11 @@ public class Base {
         System.out.println("基类普通代码块");
     }
 
-    public Base(){
+    public Base() {
         System.out.println("基类构造函数");
     }
 
-    static String init(String asd){
+    static String init(String asd) {
         System.out.println(asd);
         return "";
     }
