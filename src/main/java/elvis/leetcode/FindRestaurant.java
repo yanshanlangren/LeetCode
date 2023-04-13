@@ -28,15 +28,15 @@ public class FindRestaurant {
 
     public void sortColors(int[] nums) {
         int i = 0, j = 0, k = 0;
-        for (int num:nums) {
-            if(num==0){
+        for (int num : nums) {
+            if (num == 0) {
                 nums[i++] = 2;
                 nums[j++] = 1;
                 nums[k++] = 0;
-            }else if(num==1){
+            } else if (num == 1) {
                 nums[j++] = 2;
                 nums[k++] = 1;
-            }else if(num==2){
+            } else if (num == 2) {
                 nums[k++] = 2;
             }
         }
@@ -46,6 +46,6 @@ public class FindRestaurant {
     public static void main(String[] args) {
         FindRestaurant f = new FindRestaurant();
 //        System.out.println(f.findRestaurant(new String[]{"Shogun", "Tapioca Express", "Burger King", "KFC"}, new String[]{"Piatti", "The Grill at Torrey Pines", "Hungry Hunter Steakhouse", "Shogun"}));
-        f.sortColors(new int[]{2,0,2,1,1,0});
+        f.sortColors(new int[]{2, 0, 2, 1, 1, 0});
     }
 }

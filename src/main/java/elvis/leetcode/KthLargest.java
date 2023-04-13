@@ -6,6 +6,11 @@ public class KthLargest {
     int k;
     PriorityQueue<Integer> q;
 
+    /**
+     *
+     * @param k
+     * @param nums
+     */
     public KthLargest(int k, int[] nums) {
         this.q = new PriorityQueue<>();
         this.k = k;

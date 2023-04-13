@@ -106,7 +106,8 @@ public class Test {
     }
 
     public static void main(String[] args) {
-        System.out.println(System.getProperty("os.name").toLowerCase(Locale.ROOT));
+        System.out.println(System.getProperty("os.name"));
+        System.out.println(System.getProperty("os.version"));
 //        HashMap<String, List<String>> m = new HashMap<>();
 //        m.values().stream().collect(Collectors.toList());
 //        Test t = new Test();

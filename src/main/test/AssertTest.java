@@ -8,5 +8,8 @@ import java.time.format.DateTimeFormatter;
 
 @SpringBootTest
 public class AssertTest {
-
- }
+    @Test
+    public void test() {
+        assert false;
+    }
+}

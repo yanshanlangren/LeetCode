@@ -90,7 +90,7 @@ public class GPTomcat {
         if (servletMap.containsKey(url)) {
             servletMap.get(url).service(request,response);
         }else {
-            response.write("404-Not-Found");
+//            response.write("404-Not-Found");
         }
 
         outputStream.flush();

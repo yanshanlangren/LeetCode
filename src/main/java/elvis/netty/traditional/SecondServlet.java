@@ -6,6 +6,6 @@ public class SecondServlet extends GPServlet {
     }
 
     public void doPost(GPRequest request, GPResponse response) throws Exception {
-        response.write("this is the second Servlet");
+//        response.write("this is the second Servlet");
     }
 }
