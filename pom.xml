@@ -186,6 +186,30 @@
             <version>LATEST</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.101tec/zkclient -->
+        <dependency>
+            <groupId>com.101tec</groupId>
+            <artifactId>zkclient</artifactId>
+            <version>LATEST</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.github.sgroschupf/zkclient -->
+        <dependency>
+            <groupId>com.github.sgroschupf</groupId>
+            <artifactId>zkclient</artifactId>
+            <version>LATEST</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.twill/twill-api -->
+        <dependency>
+            <groupId>org.apache.twill</groupId>
+            <artifactId>twill-zookeeper</artifactId>
+            <version>LATEST</version>
+        </dependency>
+
+
+
+
     </dependencies>
     <build>
         <resources>
