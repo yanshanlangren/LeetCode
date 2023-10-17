@@ -15,7 +15,7 @@ public class FindCircleNum {
     }
 
     public int find(int a) {
-        return a == fa[a] ? a : (fa[a] = find(a));
+        return a == fa[a] ? a : (fa[a] = find(fa[a]));
     }
 
     public void union(int a, int b) {

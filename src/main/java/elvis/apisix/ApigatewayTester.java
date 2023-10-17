@@ -11,13 +11,13 @@ import org.apache.commons.httpclient.methods.GetMethod;
 
 public class ApigatewayTester {
 
-    private ApigatewayTester(){
-        for(int i = 0;i<100;i++) {
+    private ApigatewayTester() {
+        for (int i = 0; i < 100; i++) {
             System.out.println();
         }
     }
 
-    public static String test(){
+    public static String test() {
         return "";
     }
 

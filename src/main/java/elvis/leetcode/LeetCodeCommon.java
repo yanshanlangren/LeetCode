@@ -944,10 +944,114 @@ public class LeetCodeCommon {
         }
     }
 
+    Map<String, String> fa;
+    Map<String, Double> cal;
+
+    public String find(String a) {
+        return fa.get(a).equals(a) ? a : find(fa.get(a));
+    }
+
+    public double calc(String a) {
+        return fa.get(a).equals(a) ? 1.0 : cal.get(a) * calc(fa.get(a));
+    }
+
+    public void merge(String a, String b) {
+
+    }
+
+    public double[] calcEquation(List<List<String>> equations, double[] values, List<List<String>> queries) {
+        fa = new HashMap<>();
+        cal = new HashMap<>();
+        for (int i = 0; i < equations.size(); i++) {
+            List<String> eq = equations.get(i);
+            String s0 = eq.get(0);
+            String s1 = eq.get(1);
+            if (!fa.containsKey(s1)) {
+                fa.put(s1, s0);
+                cal.put(s0, values[i]);
+            } else {
+
+            }
+            if (!fa.containsKey(s0)) {
+                fa.put(s0, s0);
+                cal.put(s0, 1.0);
+            }
+        }
+        double[] res = new double[queries.size()];
+        for (int i = 0; i < queries.size(); i++) {
+            List<String> query = queries.get(i);
+            String s0 = query.get(0);
+            String s1 = query.get(1);
+            if (!fa.containsKey(s0) || !fa.containsKey(s1)) {
+                res[i] = -1.0;
+            }
+            if (find(s0).equals(find(s1))) {
+                res[i] = calc(s0) / calc(s1);
+            }
+        }
+        return res;
+    }
+
+    public int backpack01(int[][] demands, int cpu, int mem) {
+        int[][] dp = new int[cpu + 1][mem + 1];
+        for (int i = 0; i <= cpu; i++) {
+            for (int j = 0; j <= mem; j++) {
+                for (int k = 0; k < demands.length; k++) {
+                    if (demands[k][0] + i <= cpu && demands[k][1] + j < mem) {
+                        for (int l = demands[k][0] + i; l <= cpu; l++) {
+                            for (int m = demands[k][1] + j; m <= mem; m++) {
+                                dp[l][m] = Math.max(dp[i][j] + 1, dp[l][m]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return dp[cpu][mem];
+    }
+
+    /**
+     * https://leetcode.cn/problems/coin-lcci/
+     *
+     * @param n
+     * @return
+     */
+    public int waysToChange(int n) {
+        int[] coins = new int[]{1, 5, 10, 25};
+        int[] dp = new int[n + 1];
+        for (int i = 0; i < n + 1; i++) {
+            dp[i] = 1;
+        }
+        for (int i = 1; i < 4; i++) {
+            for (int j = 0; j <= n; j++) {
+                if (i - coins[i] > 0) {
+                    dp[j] = dp[i - coins[i]] + dp[j];
+                }
+            }
+        }
+        return dp[n];
+    }
+
     public static void main(String[] args) {
         LeetCodeCommon l = new LeetCodeCommon();
-        String[] res = l.findRelativeRanks(new int[]{10, 3, 8, 9, 4});
-        System.out.println(res);
+//        int i = l.backpack01(new int[][]{{1, 1}, {3, 1}, {2, 4}, {0, 1}, {1, 0}}, 5, 3);
+//        int i = l.waysToChange(900750);
+        int i = l.waysToChange(10);
+        System.out.println(i);
+//        List<List<String>> equations = new ArrayList<>();
+//        equations.add(Arrays.asList("a", "b"));
+//        equations.add(Arrays.asList("b", "c"));
+//        double[] values = new double[]{2.0, 3.0};
+//        List<List<String>> queries = new ArrayList<>();
+////        ["a","c"],["b","a"],["a","e"],["a","a"],["x","x"]
+//        equations.add(Arrays.asList("a", "b"));
+//        equations.add(Arrays.asList("b", "a"));
+//        equations.add(Arrays.asList("a", "e"));
+//        equations.add(Arrays.asList("a", "e"));
+//        equations.add(Arrays.asList("x", "x"));
+//        double[] res = l.calcEquation(equations, values, queries);
+////        String[] res = l.findRelativeRanks(new int[]{10, 3, 8, 9, 4});
+//        System.out.println(res);
 //        for (int i = 0; i < Integer.MAX_VALUE; i++) {
 //        long t0 = System.currentTimeMillis();
 //        if (l.checkPerfectNumber(33550336)) System.out.println(33550336);
