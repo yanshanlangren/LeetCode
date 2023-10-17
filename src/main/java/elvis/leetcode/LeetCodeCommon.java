@@ -992,18 +992,6 @@ public class LeetCodeCommon {
         return res;
     }
 
-    public int backpack01(int[][] demands, int cpu, int mem) {
-        int[][] dp = new int[cpu + 1][mem + 1];
-        for (int i = 0; i <= cpu; i++) {
-            for (int j = 0; j <= mem; j++) {
-                for (int k = 0; k < demands.length; k++) {
-                    if (demands[k][0] + i <= cpu && demands[k][1] + j < mem) {
-                        for (int l = demands[k][0] + i; l <= cpu; l++) {
-                            for (int m = demands[k][1] + j; m <= mem; m++) {
-                                dp[l][m] = Math.max(dp[i][j] + 1, dp[l][m]);
-                            }
-                        }
-                    }
     /**
      * 农行编码比赛原题
      * 云主机申请请求，给定cpu个数和内存最大数量，返回最多能满足多少个云主机新建请求
@@ -1043,9 +1031,9 @@ public class LeetCodeCommon {
         return dp[num][cpu][mem];
     }
 
+    int[][] demands;
     int cpu;
     int mem;
-    int[][] demands;
 
     public int backPack01TraceBack(int[][] demands, int cpu, int mem) {
         max = 0;
@@ -1095,16 +1083,6 @@ public class LeetCodeCommon {
      * @return
      */
     public int waysToChange(int n) {
-        int[] coins = new int[]{1, 5, 10, 25};
-        int[] dp = new int[n + 1];
-        for (int i = 0; i < n + 1; i++) {
-            dp[i] = 1;
-        }
-        for (int i = 1; i < 4; i++) {
-            for (int j = 0; j <= n; j++) {
-                if (i - coins[i] > 0) {
-                    dp[j] = dp[i - coins[i]] + dp[j];
-                }
         int[] dp = new int[n + 1];
 //        int[] coins = new int[]{1, 5, 10, 25};
         int[] coins = new int[]{25, 10, 5, 1};
@@ -1118,25 +1096,6 @@ public class LeetCodeCommon {
         return dp[n];
     }
 
-    public static void main(String[] args) {
-        LeetCodeCommon l = new LeetCodeCommon();
-//        int i = l.backpack01(new int[][]{{1, 1}, {3, 1}, {2, 4}, {0, 1}, {1, 0}}, 5, 3);
-//        int i = l.waysToChange(900750);
-        int i = l.waysToChange(10);
-        System.out.println(i);
-//        List<List<String>> equations = new ArrayList<>();
-//        equations.add(Arrays.asList("a", "b"));
-//        equations.add(Arrays.asList("b", "c"));
-//        double[] values = new double[]{2.0, 3.0};
-//        List<List<String>> queries = new ArrayList<>();
-////        ["a","c"],["b","a"],["a","e"],["a","a"],["x","x"]
-//        equations.add(Arrays.asList("a", "b"));
-//        equations.add(Arrays.asList("b", "a"));
-//        equations.add(Arrays.asList("a", "e"));
-//        equations.add(Arrays.asList("a", "e"));
-//        equations.add(Arrays.asList("x", "x"));
-//        double[] res = l.calcEquation(equations, values, queries);
-////        String[] res = l.findRelativeRanks(new int[]{10, 3, 8, 9, 4});
     /**
      * https://leetcode.cn/problems/coin-change/
      *
