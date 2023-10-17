@@ -1004,10 +1004,88 @@ public class LeetCodeCommon {
                             }
                         }
                     }
+    /**
+     * 农行编码比赛原题
+     * 云主机申请请求，给定cpu个数和内存最大数量，返回最多能满足多少个云主机新建请求
+     *
+     * @param demands 云主机创建请求，demand[i][0]表示需要cpu数量，demand[i][1]表示需要内存数量
+     * @param cpu     cpu核数
+     * @param mem     内存最大数量
+     * @return 最多能满足多少个请求
+     */
+    public int backPack01(int[][] demands, int cpu, int mem) {
+        int num = demands.length;
+        int[][] dp = new int[cpu + 1][mem + 1];
+        for (int n = 1; n <= num; n++) {
+            int c = demands[n - 1][0];
+            int m = demands[n - 1][1];
+            for (int i = cpu; i >= c; i--) {
+                for (int j = mem; j >= m; j--) {
+                    dp[i][j] = Math.max(dp[i][j], dp[i - c][j - m] + 1);
                 }
             }
         }
         return dp[cpu][mem];
+    }
+
+    public int backPack01Origin(int[][] demands, int cpu, int mem) {
+        int num = demands.length;
+        int[][][] dp = new int[num + 1][cpu + 1][mem + 1];
+        for (int n = 1; n <= num; n++) {
+            int c = demands[n - 1][0];
+            int m = demands[n - 1][1];
+            for (int i = cpu; i >= c; i--) {
+                for (int j = mem; j >= m; j--) {
+                    dp[n][i][j] = Math.max(dp[n - 1][i][j], dp[n - 1][i - c][j - m] + 1);
+                }
+            }
+        }
+        return dp[num][cpu][mem];
+    }
+
+    int cpu;
+    int mem;
+    int[][] demands;
+
+    public int backPack01TraceBack(int[][] demands, int cpu, int mem) {
+        max = 0;
+        this.cpu = cpu;
+        this.mem = mem;
+        this.demands = demands;
+        backPack01TB(0, 0, 0, 0);
+        return max;
+    }
+
+    public void backPack01TB(int n, int tDmands, int tCpu, int tMem) {
+        if (n >= demands.length) {
+            return;
+        }
+        int c = demands[n][0];
+        int m = demands[n][1];
+        if (tCpu + c <= cpu && tMem + m <= mem) {
+            max = Math.max(tDmands + 1, max);
+            backPack01TB(n + 1, tDmands + 1, tCpu + c, tMem + m);
+        }
+        backPack01TB(n + 1, tDmands, tCpu, tMem);
+    }
+
+    /**
+     * https://leetcode.cn/problems/partition-equal-subset-sum/
+     *
+     * @param nums
+     * @return
+     */
+    public boolean canPartition(int[] nums) {
+        int sum = 0;
+        for (int num : nums) {
+            sum += num;
+        }
+        if (sum % 2 == 1) {
+            return false;
+        }
+        sum /= 2;
+
+        return false;
     }
 
     /**
@@ -1027,6 +1105,14 @@ public class LeetCodeCommon {
                 if (i - coins[i] > 0) {
                     dp[j] = dp[i - coins[i]] + dp[j];
                 }
+        int[] dp = new int[n + 1];
+//        int[] coins = new int[]{1, 5, 10, 25};
+        int[] coins = new int[]{25, 10, 5, 1};
+        dp[0] = 1;
+        for (int i = 0; i < 4; i++) {
+            for (int j = coins[i]; j < n + 1; j++) {
+                dp[j] += dp[j - coins[i]];
+                dp[j] %= 1000000007;
             }
         }
         return dp[n];
@@ -1051,6 +1137,47 @@ public class LeetCodeCommon {
 //        equations.add(Arrays.asList("x", "x"));
 //        double[] res = l.calcEquation(equations, values, queries);
 ////        String[] res = l.findRelativeRanks(new int[]{10, 3, 8, 9, 4});
+    /**
+     * https://leetcode.cn/problems/coin-change/
+     *
+     * @param coins
+     * @param amount
+     * @return
+     */
+    public int coinChange(int[] coins, int amount) {
+        int[] dp = new int[amount + 1];
+        for (int j = 1; j <= amount; j++) {
+            dp[j] = Integer.MAX_VALUE - 1;
+        }
+        for (int i = 1; i <= coins.length; i++) {
+            int coin = coins[i - 1];
+            for (int j = coin; j <= amount; j++) {
+                dp[j] = Math.min(dp[j - coins[i - 1]] + 1, dp[j]);
+            }
+        }
+        return dp[amount] >= Integer.MAX_VALUE - 1 ? -1 : dp[amount];
+    }
+
+    public static void main(String[] args) {
+        LeetCodeCommon l = new LeetCodeCommon();
+
+
+        int x = l.coinChange(new int[]{1, 2, 5}, 11);
+//        int x = l.coinChange(new int[]{1}, 0);
+        System.out.println(x);
+//        int x = l.waysToChange(10);
+////        int x = l.waysToChange(900750);
+//        System.out.println(x);
+
+//        boolean max = l.canPartition(new int[]{1, 5, 11, 5});
+//        boolean max = l.canPartition(new int[]{1, 2, 3, 5});
+
+
+//        int max = l.backPack01Origin(new int[][]{{1, 1}, {3, 1}, {2, 2}, {2, 1}}, 6, 3);
+//        System.out.println(max);
+
+
+//        String[] res = l.findRelativeRanks(new int[]{10, 3, 8, 9, 4});
 //        System.out.println(res);
 //        for (int i = 0; i < Integer.MAX_VALUE; i++) {
 //        long t0 = System.currentTimeMillis();
