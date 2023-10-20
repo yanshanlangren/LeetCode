@@ -140,28 +140,6 @@ public class LeetCodeCommon {
         return res;
     }
 
-    List<String> res;
-    int n;
-
-    public List<String> generateParenthesis(int n) {
-        this.n = n;
-        res = new ArrayList<>();
-        generate("", 0, 0);
-        return res;
-    }
-
-    public void generate(String pattern, int c1, int c2) {
-        if (c1 > n || c2 > n || c2 > c1) {
-            return;
-        }
-        if (c1 == n && c2 == n) {
-            res.add(pattern);
-            return;
-        }
-        generate(pattern + '(', c1 + 1, c2);
-        generate(pattern + ')', c1, c2 + 1);
-    }
-
 //    public void generate(String pattern, int n) {
 //        if (n == 0) {
 //            set.add(pattern);
@@ -1058,25 +1036,6 @@ public class LeetCodeCommon {
     }
 
     /**
-     * https://leetcode.cn/problems/partition-equal-subset-sum/
-     *
-     * @param nums
-     * @return
-     */
-    public boolean canPartition(int[] nums) {
-        int sum = 0;
-        for (int num : nums) {
-            sum += num;
-        }
-        if (sum % 2 == 1) {
-            return false;
-        }
-        sum /= 2;
-
-        return false;
-    }
-
-    /**
      * https://leetcode.cn/problems/coin-lcci/
      *
      * @param n
@@ -1213,12 +1172,280 @@ public class LeetCodeCommon {
         return sum;
     }
 
+    List<String> res;
+    int n;
+
+    public List<String> generateParenthesis(int n) {
+        res = new ArrayList<>();
+        StringBuffer sb = new StringBuffer();
+        this.n = n;
+        traceBack(0, 0, sb);
+        return res;
+    }
+
+    public void traceBack(int dep, int total, StringBuffer sb) {
+        if (dep == 0 && total == n) {
+            res.add(sb.toString());
+            return;
+        }
+        if (total < n) {
+            sb.append("(");
+            traceBack(dep + 1, total + 1, sb);
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        if (dep > 0) {
+            sb.append(")");
+            traceBack(dep - 1, total, sb);
+            sb.deleteCharAt(sb.length() - 1);
+        }
+    }
+
+    /**
+     * https://leetcode.cn/problems/reverse-linked-list/
+     *
+     * @param head
+     * @return
+     */
+    public ListNode reverseList(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode next = reverseList(head.next);
+        head.next.next = head;
+        head.next = null;
+        return next;
+    }
+
+    /**
+     * https://leetcode.cn/problems/find-the-duplicate-number/
+     *
+     * @param nums
+     * @return
+     */
+    public int findDuplicate(int[] nums) {
+        int fast = nums[nums[0]], slow = nums[0];
+        return 0;
+    }
+
+    /**
+     * num1[1,2,3], nums2[1,2,3], x 4
+     *
+     * @param nums1
+     * @param nums2
+     * @param x
+     * @return
+     */
+    public int q3(int[] nums1, int[] nums2, int x) {
+        int len = nums1.length;
+        PriorityQueue<Node> q = new PriorityQueue<>((a, b) -> (a.depth - b.depth));
+        q.offer(new Node(nums1, 0));
+        while (!q.isEmpty()) {
+            Node n = q.poll();
+            int sum = 0;
+            if (n.depth > 100) {
+                return -1;
+            }
+            for (int i = 0; i < len; i++) {
+                sum += n.nums[i];
+            }
+            if (sum <= x) {
+                return n.depth;
+            }
+            for (int i = 0; i < len; i++) {
+                n.nums[i] += nums2[i];
+            }
+            for (int i = 0; i < len; i++) {
+                int temp = n.nums[i];
+                n.nums[i] = 0;
+                q.offer(new Node(n.nums, n.depth + 1));
+                n.nums[i] = temp;
+            }
+        }
+        return -1;
+    }
+
+    public static class Node {
+        public int[] nums;
+        public int depth;
+
+        public Node(int[] nums, int depth) {
+            this.nums = new int[nums.length];
+            System.arraycopy(nums, 0, this.nums, 0, nums.length);
+            this.depth = depth;
+        }
+    }
+
+    /**
+     * https://leetcode.cn/problems/minimum-time-to-make-array-sum-at-most-x/
+     *
+     * @param nums1
+     * @param nums2
+     * @param x
+     * @return
+     */
+    public int minimumTime(List<Integer> nums1, List<Integer> nums2, int x) {
+        this.len = nums1.size();
+        this.minDepth = Integer.MAX_VALUE;
+        this.nums2 = nums2;
+        this.x = x;
+        minimumTimeTraceBack(0, nums1);
+        return this.minDepth == Integer.MAX_VALUE ? -1 : this.minDepth;
+    }
+
+    int len, x;
+    int minDepth;
+    List<Integer> nums2;
+
+    public void minimumTimeTraceBack(int depth, List<Integer> nums) {
+        int sum = 0;
+        for (int i = 0; i < len; i++) {
+            sum += nums.get(i);
+        }
+        if (sum <= x) {
+            minDepth = Math.min(depth, minDepth);
+            return;
+        }
+        if (depth >= len) {
+            return;
+        }
+        for (int i = 0; i < len; i++) {
+            nums.set(i, nums2.get(i) + nums.get(i));
+        }
+        for (int i = 0; i < len; i++) {
+            int temp = nums.get(i);
+            nums.set(i, 0);
+            minimumTimeTraceBack(depth + 1, nums);
+            nums.set(i, temp);
+        }
+        for (int i = 0; i < len; i++) {
+            nums.set(i, nums.get(i) - nums2.get(i));
+        }
+    }
+
+    /**
+     * https://leetcode.cn/problems/flatten-binary-tree-to-linked-list/description/
+     *
+     * @param root
+     */
+    public void flatten(TreeNode root) {
+        queue = new LinkedList<>();
+        search(root);
+        TreeNode pre = queue.poll();
+        pre.left = null;
+        while (!queue.isEmpty()) {
+            TreeNode cur = queue.poll();
+            cur.left = null;
+            pre.right = cur;
+            pre = cur;
+        }
+    }
+
+    Queue<TreeNode> queue;
+
+    public void search(TreeNode node) {
+        if (node == null) {
+            return;
+        }
+        queue.offer(node);
+        search(node.left);
+        search(node.right);
+    }
+
+    /**
+     * https://leetcode.cn/problems/partition-equal-subset-sum/
+     *
+     * @param nums
+     * @return
+     */
+    public boolean canPartition(int[] nums) {
+//        int sum = 0;
+//        for (int i = 0; i < nums.length; i++) {
+//            sum += nums[i];
+//        }
+//        if (sum % 2 == 1) {
+//            return false;
+//        }
+//        sum /= 2;
+//        int[][] dp = new int[][]; for (int i = 0; i <)
+        return false;
+    }
+
+    /**
+     * https://leetcode.cn/problems/course-schedule/
+     *
+     * @param numCourses
+     * @param prerequisites
+     * @return
+     */
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        List<Integer>[] pre = new ArrayList[numCourses];
+        for (int i = 0; i < numCourses; i++) {
+            pre[i] = new ArrayList<>();
+        }
+        int[] in = new int[numCourses];
+        for (int[] p : prerequisites) {
+            in[p[1]]++;
+            pre[p[0]].add(p[1]);
+        }
+        int count = numCourses;
+        Queue<Integer> q = new LinkedList<>();
+        for (int i = 0; i < numCourses; i++) {
+            if (in[i] == 0) {
+                q.offer(i);
+                count--;
+            }
+        }
+        while (!q.isEmpty()) {
+            int n = q.poll();
+            for (int i : pre[n]) {
+                in[i]--;
+                if (in[i] == 0) {
+                    q.offer(i);
+                    count--;
+                }
+            }
+        }
+        return count == 0;
+    }
+
+    /**
+     * https://leetcode.cn/problems/kth-smallest-number-in-multiplication-table/
+     *
+     * @param m
+     * @param n
+     * @param k
+     * @return
+     */
+    public int findKthNumber(int m, int n, int k) {
+        PriorityQueue<Integer> q = new PriorityQueue<>((a, b) -> (b - a));
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                q.offer(i * j);
+                if (q.size() > k) {
+                    q.poll();
+                }
+            }
+        }
+        return q.peek();
+    }
+
+    public int halfSearch(int[] num, int a) {
+        int l = 0, r = num.length - 1;
+        while (l < r) {
+            int t = num[(l + r) / 2];
+            if (t > a) {
+                r = (l + r) / 2;
+            } else {
+                l = (l + r) / 2 + 1;
+            }
+        }
+        return l;
+    }
+
     public static void main(String[] args) {
         LeetCodeCommon l = new LeetCodeCommon();
-//        int a = l.trap(new int[]{0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1});
-//        int a = l.trap(new int[]{4, 2, 0, 3, 2, 5});
-        int a = l.trap(new int[]{0, 2, 0});
-
-        System.out.println(a);
+        int root = l.halfSearch(new int[]{1, 2, 3}, 2);
+//        int root = l.halfSearch(new int[]{0,1}, 1);
+        System.out.println(root);
     }
 }
