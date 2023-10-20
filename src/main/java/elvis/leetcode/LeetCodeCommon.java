@@ -1440,6 +1440,97 @@ public class LeetCodeCommon {
             }
         }
         return l;
+    /**
+     * https://leetcode.cn/problems/sudoku-solver/
+     *
+     * @param board
+     */
+    public void solveSudoku(char[][] board) {
+        SudokuNode[][] b = new SudokuNode[9][9];
+        PriorityQueue<SudokuNode> q = new PriorityQueue<>((a, c) -> a.choiceCount - c.choiceCount);
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (board[i][j] == '.') {
+                    boolean[] choice = new boolean[9];
+                    for (int k = 0; k < 9; k++) {
+                        choice[k] = true;
+                    }
+                    b[i][j] = new SudokuNode(i, j, choice, 9);
+                    q.offer(b[i][j]);
+                }
+            }
+        }
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (board[i][j] != '.') {
+                    fillSudokuBoard(b, board, i, j, board[i][j]);
+                }
+            }
+        }
+        while (!q.isEmpty()) {
+            SudokuNode node = q.poll();
+            int i;
+            for (i = 0; i < 9; i++) {
+                if (node.choice[i]) {
+                    break;
+                }
+            }
+            fillSudokuBoard(b, board, node.x, node.y, (char) ('1' + i));
+        }
+    }
+
+    public void fillSudokuBoard(SudokuNode[][] b, char[][] board, int x, int y, char n) {
+        System.out.println("x:" + x + ", y:" + y + ", char:" + n);
+        int num = n - '1';
+        board[x][y] = n;
+        if (b[x][y] != null) {
+            b[x][y] = null;
+        }
+        for (int i = 0; i < 9; i++) {
+            if (i == y) {
+                continue;
+            }
+            SudokuNode node = b[x][i];
+            if (node != null && node.choice[num]) {
+                node.choice[num] = false;
+                node.choiceCount--;
+            }
+        }
+
+        for (int i = 0; i < 9; i++) {
+            if (i == x) {
+                continue;
+            }
+            SudokuNode node = b[i][y];
+            if (node != null && node.choice[num]) {
+                node.choiceCount--;
+                node.choice[num] = false;
+            }
+        }
+        for (int i = x / 3 * 3; i < (x / 3 + 1) * 3; i++) {
+            for (int j = y / 3 * 3; j < (y / 3 + 1) * 3; j++) {
+                if (i == x && j == y) {
+                    continue;
+                }
+                SudokuNode node = b[i][j];
+                if (node != null && node.choice[num]) {
+                    node.choiceCount--;
+                    node.choice[num] = false;
+                }
+            }
+        }
+    }
+
+    public static class SudokuNode {
+        int choiceCount, x, y;
+        boolean[] choice;
+
+        public SudokuNode(int x, int y, boolean[] choice, int choiceCount) {
+            this.x = x;
+            this.y = y;
+            this.choice = choice;
+            this.choiceCount = choiceCount;
+        }
     }
 
     public static void main(String[] args) {
@@ -1447,5 +1538,9 @@ public class LeetCodeCommon {
         int root = l.halfSearch(new int[]{1, 2, 3}, 2);
 //        int root = l.halfSearch(new int[]{0,1}, 1);
         System.out.println(root);
+        char[][] board = new char[][]{{'5', '3', '.', '.', '7', '.', '.', '.', '.'}, {'6', '.', '.', '1', '9', '5', '.', '.', '.'}, {'.', '9', '8', '.', '.', '.', '.', '6', '.'}, {'8', '.', '.', '.', '6', '.', '.', '.', '3'}, {'4', '.', '.', '8', '.', '3', '.', '.', '1'}, {'7', '.', '.', '.', '2', '.', '.', '.', '6'}, {'.', '6', '.', '.', '.', '.', '2', '8', '.'}, {'.', '.', '.', '4', '1', '9', '.', '.', '5'}, {'.', '.', '.', '.', '8', '.', '.', '7', '9'}};
+        l.solveSudoku(board);
+
+        System.out.println(board);
     }
 }
