@@ -1417,6 +1417,23 @@ public class LeetCodeCommon {
      * @return
      */
     public int findKthNumber(int m, int n, int k) {
+        int l = 1, r = m * n;
+        while (l < r) {
+            int mid = (l + r) / 2;
+            int count = 0;
+            for (int i = 1; i <= m; i++) {
+                count += Math.min(mid / i, n);
+            }
+            if (count >= k) {
+                r = mid;
+            } else {
+                l = mid + 1;
+            }
+        }
+        return l;
+    }
+
+    public int findKthNumberOrigin(int m, int n, int k) {
         PriorityQueue<Integer> q = new PriorityQueue<>((a, b) -> (b - a));
         for (int i = 1; i <= m; i++) {
             for (int j = 1; j <= n; j++) {
@@ -1429,18 +1446,26 @@ public class LeetCodeCommon {
         return q.peek();
     }
 
-    public int halfSearch(int[] num, int a) {
+
+    public int halfSearch(int[] num, int target) {
         int l = 0, r = num.length - 1;
-        while (l < r) {
-            int t = num[(l + r) / 2];
-            if (t > a) {
-                r = (l + r) / 2;
+        while (l <= r) {
+            int m = (l + r) / 2;
+            int t = num[m];
+            if (t > target) {
+                r = m - 1;
+            } else if (t < target) {
+                l = m + 1;
             } else {
-                l = (l + r) / 2 + 1;
+                return t;
             }
         }
-        return l;
+        if (num[l] == target) {
+            return l;
+        }
+        return -1;
     }
+
     /**
      * https://leetcode.cn/problems/sudoku-solver/
      *
@@ -1534,14 +1559,185 @@ public class LeetCodeCommon {
         }
     }
 
-    public static void main(String[] args) {
-        LeetCodeCommon l = new LeetCodeCommon();
-        int root = l.halfSearch(new int[]{1, 2, 3}, 2);
-//        int root = l.halfSearch(new int[]{0,1}, 1);
-        System.out.println(root);
-        char[][] board = new char[][]{{'5', '3', '.', '.', '7', '.', '.', '.', '.'}, {'6', '.', '.', '1', '9', '5', '.', '.', '.'}, {'.', '9', '8', '.', '.', '.', '.', '6', '.'}, {'8', '.', '.', '.', '6', '.', '.', '.', '3'}, {'4', '.', '.', '8', '.', '3', '.', '.', '1'}, {'7', '.', '.', '.', '2', '.', '.', '.', '6'}, {'.', '6', '.', '.', '.', '.', '2', '8', '.'}, {'.', '.', '.', '4', '1', '9', '.', '.', '5'}, {'.', '.', '.', '.', '8', '.', '.', '7', '9'}};
-        l.solveSudoku(board);
+    /**
+     * https://leetcode.cn/problems/number-of-dice-rolls-with-target-sum/?envType=daily-question&envId=2023-10-24
+     *
+     * @param n
+     * @param k
+     * @param target
+     * @return
+     */
+    public int numRollsToTarget(int n, int k, int target) {
+        int[][] dp = new int[target + 1][n + 1];
+        dp[0][0] = 1;
+        for (int i = 1; i <= target; i++) {
+            for (int j = 1; j <= n; j++) {
+                for (int l = 1; l <= k; l++) {
+                    if (i - l >= 0) {
+                        dp[i][j] = (dp[i][j] + dp[i - l][j - 1]) % 1000000007;
+                    }
+                }
+            }
+        }
+        return dp[target][n];
+    }
 
-        System.out.println(board);
+    /**
+     * https://leetcode.cn/problems/number-of-islands/
+     *
+     * @param grid
+     * @return
+     */
+    public int numIslands(char[][] grid) {
+        this.grid = grid;
+        row = grid.length;
+        col = grid[0].length;
+        int count = 0;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (this.grid[i][j] == '1') {
+                    count++;
+                    dfs(i, j);
+                }
+            }
+        }
+        return count;
+    }
+
+    char[][] grid;
+    int row, col;
+
+    public void dfs(int r, int c) {
+        grid[r][c] = '0';
+        if (r + 1 < row && grid[r + 1][c] == '1') {
+            dfs(r + 1, c);
+        }
+        if (c + 1 < col && grid[r][c + 1] == '1') {
+            dfs(r, c + 1);
+        }
+        if (r - 1 >= 0 && grid[r - 1][c] == '1') {
+            dfs(r - 1, c);
+        }
+        if (c - 1 >= 0 && grid[r][c - 1] == '1') {
+            dfs(r, c - 1);
+        }
+    }
+
+    /**
+     * https://leetcode.cn/problems/minimum-window-substring/
+     *
+     * @param s
+     * @param t
+     * @return
+     */
+    public String minWindow(String s, String t) {
+        int l = 0, r = 0;
+        int min = Integer.MAX_VALUE;
+        String minString = "";
+        int len1 = s.length();
+        int len2 = t.length();
+
+        int i = 0, count = 0;
+        //记录t中每个字符对应的下标
+        Map<Character, Integer> cm = new HashMap<>();
+        while (i < len2) {
+            if (!cm.containsKey(t.charAt(i))) {
+                cm.put(t.charAt(i), count++);
+            }
+            i++;
+        }
+
+        //t字符串的特征值
+        int[] tSym = new int[count];
+        for (char c : t.toCharArray()) {
+            tSym[cm.get(c)]++;
+        }
+
+        //当前窗口内的特征值
+        int[] m = new int[count];
+        Integer idx;
+        while (l < len1 && r < len1) {
+            //r右移动直到窗口内包含t的所有字符
+            while (r < len1 && checkSymbol(m, tSym) > 0) {
+                idx = cm.get(s.charAt(r));
+                //字符首次出现时特征值对应的位由0->1;
+                if (idx != null) {
+                    m[idx]++;
+                }
+                r++;
+            }
+            //l右移直到窗口内的字符满足条件且最短
+            while (l < len1 && checkSymbol(m, tSym) == 0) {
+                idx = cm.get(s.charAt(l));
+                if (idx != null) {
+                    if (m[idx] == tSym[idx]) {
+                        if (r - l < min) {
+                            min = r - l;
+                            minString = s.substring(l, r);
+                        }
+                        m[idx]--;
+                        l++;
+                        break;
+                    }
+                    m[idx]--;
+                }
+                l++;
+            }
+
+            //l右移直到窗口内缺少一个字符，并且其余字符保持最低出现次数,
+            while (l < len1 && checkSymbol(m, tSym) == 1) {
+                idx = cm.get(s.charAt(l));
+                if (idx != null) {
+                    if (m[idx] == tSym[idx]) {
+                        break;
+                    }
+                    m[idx]--;
+                }
+                l++;
+            }
+        }
+        return minString;
+    }
+
+    private int checkSymbol(int[] sym, int[] tSym) {
+        int count = 0;
+        for (int i = 0; i < tSym.length; i++) {
+            if (sym[i] < tSym[i]) {
+                count += tSym[i] - sym[i];
+            }
+        }
+        return count;
+    }
+
+    /**
+     * 计算数字中的位数为1的数量
+     *
+     * @return
+     */
+    public int countBit1(int n) {
+        int count = 0;
+        while (n > 0) {
+            count += n % 2;
+            n >>= 1;
+        }
+        return count;
+    }
+
+    public static void main(String[] args) {
+//        List<Integer> l = new ArrayList<>();
+//        int[] a = l.stream().mapToInt(Integer::intValue).toArray();
+
+
+        LeetCodeCommon l = new LeetCodeCommon();
+//        String root = l.minWindow("ADOBECODEBANC", "ABC");
+//        String root = l.minWindow("a", "a");
+//        String root = l.minWindow("a", "aa");
+//        String root = l.minWindow("aa", "aa");
+        String root = l.minWindow("aaflslflsldkalskaaa", "aaa");
+        System.out.println(root);
+//        char[][] board = new char[][]{{'5', '3', '.', '.', '7', '.', '.', '.', '.'}, {'6', '.', '.', '1', '9', '5', '.', '.', '.'}, {'.', '9', '8', '.', '.', '.', '.', '6', '.'}, {'8', '.', '.', '.', '6', '.', '.', '.', '3'}, {'4', '.', '.', '8', '.', '3', '.', '.', '1'}, {'7', '.', '.', '.', '2', '.', '.', '.', '6'}, {'.', '6', '.', '.', '.', '.', '2', '8', '.'}, {'.', '.', '.', '4', '1', '9', '.', '.', '5'}, {'.', '.', '.', '.', '8', '.', '.', '7', '9'}};
+//        l.solveSudoku(board);
+
+//        System.out.println(board);
     }
 }
