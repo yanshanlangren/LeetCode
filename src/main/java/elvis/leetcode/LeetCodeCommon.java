@@ -1723,21 +1723,46 @@ public class LeetCodeCommon {
         return count;
     }
 
+    /**
+     * https://leetcode.cn/problems/h-index-ii/?envType=daily-question&envId=2023-10-30
+     *
+     * @param citations
+     * @return
+     */
+    public int hIndex(int[] citations) {
+//        int n = citations.length;
+//
+//        int l = 0, r = n - 1;
+//        while (l < r) {
+//            int t = (r - l) / 2 + l;
+//            if (citations[t] >= n - t) {
+//                r = t;
+//            } else {
+//                l = t + 1;
+//            }
+//        }
+//
+//        return citations[l] == 0 ? 0 : n - l;
+
+        int n = citations.length;
+        int l = 0;
+        int r = n - 1;
+        while (l <= r) {
+            int t = (r + l) / 2;
+            if (citations[t] >= n - t) {
+                r = t - 1;
+            } else {
+                l = t + 1;
+            }
+        }
+        return n - l;
+    }
+
     public static void main(String[] args) {
-//        List<Integer> l = new ArrayList<>();
-//        int[] a = l.stream().mapToInt(Integer::intValue).toArray();
-
-
         LeetCodeCommon l = new LeetCodeCommon();
-//        String root = l.minWindow("ADOBECODEBANC", "ABC");
-//        String root = l.minWindow("a", "a");
-//        String root = l.minWindow("a", "aa");
-//        String root = l.minWindow("aa", "aa");
-        String root = l.minWindow("aaflslflsldkalskaaa", "aaa");
-        System.out.println(root);
-//        char[][] board = new char[][]{{'5', '3', '.', '.', '7', '.', '.', '.', '.'}, {'6', '.', '.', '1', '9', '5', '.', '.', '.'}, {'.', '9', '8', '.', '.', '.', '.', '6', '.'}, {'8', '.', '.', '.', '6', '.', '.', '.', '3'}, {'4', '.', '.', '8', '.', '3', '.', '.', '1'}, {'7', '.', '.', '.', '2', '.', '.', '.', '6'}, {'.', '6', '.', '.', '.', '.', '2', '8', '.'}, {'.', '.', '.', '4', '1', '9', '.', '.', '5'}, {'.', '.', '.', '.', '8', '.', '.', '7', '9'}};
-//        l.solveSudoku(board);
-
-//        System.out.println(board);
+//        int board = l.hIndex(new int[]{0, 1, 3, 5, 6});
+//        int board = l.hIndex(new int[]{1,2,100});
+        int board = l.hIndex(new int[]{0, 0});
+        System.out.println(board);
     }
 }
