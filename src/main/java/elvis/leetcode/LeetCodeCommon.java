@@ -1758,11 +1758,152 @@ public class LeetCodeCommon {
         return n - l;
     }
 
+    /**
+     * https://leetcode.cn/problems/maximum-employees-to-be-invited-to-a-meeting/
+     *
+     * @param favorite
+     * @return
+     */
+    public int maximumInvitations(int[] favorite) {
+        int len = favorite.length;
+        //计算所有节点的入度,和每个前置节点
+        int[] du = new int[len];
+        int duMax = -1;
+        int duMaxIdx = -1;
+        List<Integer>[] pre = new ArrayList[len];
+        for (int i = 0; i < len; i++) {
+            pre[i] = new ArrayList<>();
+        }
+        for (int i = 0; i < len; i++) {
+            du[favorite[i]]++;
+            if (duMax < du[favorite[i]]) {
+                duMax = du[favorite[i]];
+                duMaxIdx = favorite[i];
+            }
+            pre[favorite[i]].add(i);
+        }
+
+        //邀请入度最高的节点邀请的节点加入
+        boolean[] visitid = new boolean[len];
+        int total = 0;
+        System.out.println(favorite[duMaxIdx]);
+        visitid[favorite[duMaxIdx]] = true;
+        total++;
+
+        //从入度最高的节点的前置节点中依次挑选入度最高的节点加入
+        Queue<Integer> q = new LinkedList<>();
+        q.offer(duMaxIdx);
+        while (!q.isEmpty()) {
+            int idx = q.poll();
+            visitid[idx] = true;
+            System.out.println(idx);
+            total++;
+            int max = -1;
+            int maxIdx = -1;
+            for (Integer p : pre[idx]) {
+                if (max < du[p] && !visitid[p]) {
+                    max = du[p];
+                    maxIdx = p;
+                }
+            }
+            if (maxIdx >= 0) {
+                q.offer(maxIdx);
+            }
+        }
+        return total;
+    }
+
+    /**
+     * https://leetcode.cn/problems/minimum-sum-of-mountain-triplets-ii/
+     *
+     * @param nums
+     * @return
+     */
+    public int minimumSum(int[] nums) {
+        int len = nums.length;
+        int[] left = new int[len];
+        int[] right = new int[len];
+        Arrays.fill(left, Integer.MAX_VALUE);
+        Arrays.fill(right, Integer.MAX_VALUE);
+        for (int i = 1; i < len; i++) {
+            left[i] = Math.min(left[i - 1], nums[i - 1]);
+        }
+        for (int i = len - 2; i >= 0; i--) {
+            right[i] = Math.min(right[i + 1], nums[i + 1]);
+        }
+        int min = Integer.MAX_VALUE;
+        for (int i = 1; i < len - 1; i++) {
+            if (left[i] == Integer.MAX_VALUE || right[i] == Integer.MAX_VALUE) {
+                continue;
+            }
+            if (left[i] < nums[i] && right[i] < nums[i]) {
+                min = Math.min(nums[i] + left[i] + right[i], min);
+            }
+        }
+        return min == Integer.MAX_VALUE ? -1 : min;
+    }
+
+    /**
+     * https://leetcode.cn/problems/remove-k-digits/
+     *
+     * @param num
+     * @param k
+     * @return
+     */
+    public String removeKdigits(String num, int k) {
+        char[] ca = num.toCharArray();
+        int len = ca.length;
+
+        //先找前缀包含0的数据
+        int l = 1, r = 1, start = 0;
+        while (k > 0 && l < len && r < len) {
+            while (r < len && ca[r] == '0') {
+                r++;
+            }
+            if (r > l && k >= l - start) {
+                k -= l - start;
+                start = r;
+            }
+            r++;
+            l = r;
+        }
+        int[] next = new int[len - start];
+        Arrays.fill(next, -1);
+
+        Stack<Integer> s = new Stack<>();
+        s.push(start);
+        for (int i = start + 1; i < len; i++) {
+            while (!s.isEmpty() && ca[s.peek()] > ca[i]) {
+                next[s.pop() - start] = i;
+            }
+            s.push(i);
+        }
+        StringBuilder ans = new StringBuilder();
+        for (int i = start; i < len && k >= 0; ) {
+            if (next[i - start] == -1) {
+                ans.append(ca[i]);
+                i++;
+            } else if (k >= next[i - start] - i) {
+                k -= next[i - start] - i;
+                i = next[i - start];
+            } else {
+                ans.append(ca[i]);
+                i++;
+            }
+        }
+        while (k > 0) {
+            ans.deleteCharAt(ans.length() - 1);
+            k--;
+        }
+        return ans.length() == 0 ? "0" : ans.toString();
+    }
+
     public static void main(String[] args) {
         LeetCodeCommon l = new LeetCodeCommon();
-//        int board = l.hIndex(new int[]{0, 1, 3, 5, 6});
-//        int board = l.hIndex(new int[]{1,2,100});
-        int board = l.hIndex(new int[]{0, 0});
-        System.out.println(board);
+        String board;
+//        board = l.removeKdigits("1432219", 3);
+        board = l.removeKdigits("10200", 1);
+//        board = l.removeKdigits("10", 1);
+        System.out.println("ans:" + board);
     }
 }
