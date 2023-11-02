@@ -1,5 +1,6 @@
 package elvis.leetcode;
 
+import com.alibaba.fastjson.JSONObject;
 import elvis.leetcode.model.ListNode;
 
 import java.util.*;
@@ -1631,82 +1632,64 @@ public class LeetCodeCommon {
      * @return
      */
     public String minWindow(String s, String t) {
-        int l = 0, r = 0;
-        int min = Integer.MAX_VALUE;
+        int len = s.length();
         String minString = "";
-        int len1 = s.length();
-        int len2 = t.length();
-
-        int i = 0, count = 0;
-        //记录t中每个字符对应的下标
-        Map<Character, Integer> cm = new HashMap<>();
-        while (i < len2) {
-            if (!cm.containsKey(t.charAt(i))) {
-                cm.put(t.charAt(i), count++);
-            }
-            i++;
-        }
-
-        //t字符串的特征值
-        int[] tSym = new int[count];
+        int minLen = Integer.MAX_VALUE;
+        Map<Character, Integer> targetMap = new HashMap<>();
+        Map<Character, Integer> currentMap = new HashMap<>();
+        //构建目标map
         for (char c : t.toCharArray()) {
-            tSym[cm.get(c)]++;
+            if (targetMap.containsKey(c)) {
+                targetMap.put(c, targetMap.get(c) + 1);
+            } else {
+                targetMap.put(c, 1);
+            }
         }
-
-        //当前窗口内的特征值
-        int[] m = new int[count];
-        Integer idx;
-        while (l < len1 && r < len1) {
-            //r右移动直到窗口内包含t的所有字符
-            while (r < len1 && checkSymbol(m, tSym) > 0) {
-                idx = cm.get(s.charAt(r));
-                //字符首次出现时特征值对应的位由0->1;
-                if (idx != null) {
-                    m[idx]++;
+        int l = 0, r = 0;
+        char[] ca = s.toCharArray();
+        while (l <= r && r < len) {
+            char c = ca[r];
+            if (targetMap.containsKey(c)) {
+                if (currentMap.containsKey(c)) {
+                    currentMap.put(c, currentMap.get(c) + 1);
+                } else {
+                    currentMap.put(c, 1);
                 }
-                r++;
-            }
-            //l右移直到窗口内的字符满足条件且最短
-            while (l < len1 && checkSymbol(m, tSym) == 0) {
-                idx = cm.get(s.charAt(l));
-                if (idx != null) {
-                    if (m[idx] == tSym[idx]) {
-                        if (r - l < min) {
-                            min = r - l;
-                            minString = s.substring(l, r);
+
+                if (checkSymbol(currentMap, targetMap)) {
+                    //l往右缩直到窗口最小
+                    while (true) {
+                        if (minLen > r - l + 1) {
+                            minLen = r - l + 1;
+                            minString = s.substring(l, r + 1);
                         }
-                        m[idx]--;
-                        l++;
-                        break;
-                    }
-                    m[idx]--;
-                }
-                l++;
-            }
 
-            //l右移直到窗口内缺少一个字符，并且其余字符保持最低出现次数,
-            while (l < len1 && checkSymbol(m, tSym) == 1) {
-                idx = cm.get(s.charAt(l));
-                if (idx != null) {
-                    if (m[idx] == tSym[idx]) {
-                        break;
+                        char c1 = ca[l];
+                        l++;
+                        if (targetMap.containsKey(c1)) {
+                            currentMap.put(c1, currentMap.get(c1) - 1);
+                            if (!checkSymbol(currentMap, targetMap)) {
+                                break;
+                            }
+                        }
                     }
-                    m[idx]--;
                 }
-                l++;
             }
+            r++;
         }
         return minString;
     }
 
-    private int checkSymbol(int[] sym, int[] tSym) {
-        int count = 0;
-        for (int i = 0; i < tSym.length; i++) {
-            if (sym[i] < tSym[i]) {
-                count += tSym[i] - sym[i];
+    private boolean checkSymbol(Map<Character, Integer> s, Map<Character, Integer> t) {
+        for (Character c : t.keySet()) {
+            if (!s.containsKey(c) && t.get(c) > 0) {
+                return false;
+            }
+            if (s.get(c) < t.get(c)) {
+                return false;
             }
         }
-        return count;
+        return true;
     }
 
     /**
@@ -1855,55 +1838,218 @@ public class LeetCodeCommon {
         int len = ca.length;
 
         //先找前缀包含0的数据
-        int l = 1, r = 1, start = 0;
-        while (k > 0 && l < len && r < len) {
-            while (r < len && ca[r] == '0') {
-                r++;
+        //f标识去除前缀0后字符串开始的地址
+        int f = 0;
+        for (int i = 0; i < len && i - f <= k && k > 0; i++) {
+            //找到0后
+            if (ca[i] == '0') {
+                //如果k足够删除前缀不为0的数字,则删除
+                if (k >= i - f) {
+                    k -= i - f;
+                    f = i;
+                    //找到0结束
+                    while (f < len && ca[f] == '0') {
+                        f++;
+                    }
+                    i = f - 1;
+                } else {
+                    break;
+                }
             }
-            if (r > l && k >= l - start) {
-                k -= l - start;
-                start = r;
-            }
-            r++;
-            l = r;
         }
-        int[] next = new int[len - start];
+        //单调栈搜索下一个比当前字符小的字符
+        int[] next = new int[len - f];
         Arrays.fill(next, -1);
-
         Stack<Integer> s = new Stack<>();
-        s.push(start);
-        for (int i = start + 1; i < len; i++) {
+        s.push(f);
+        for (int i = f + 1; i < len; i++) {
             while (!s.isEmpty() && ca[s.peek()] > ca[i]) {
-                next[s.pop() - start] = i;
+                next[s.pop() - f] = i;
             }
             s.push(i);
         }
+
+        //组装返回
         StringBuilder ans = new StringBuilder();
-        for (int i = start; i < len && k >= 0; ) {
-            if (next[i - start] == -1) {
+        for (int i = f; i < len && k >= 0; ) {
+            if (next[i - f] == -1) {
                 ans.append(ca[i]);
                 i++;
-            } else if (k >= next[i - start] - i) {
-                k -= next[i - start] - i;
-                i = next[i - start];
+            } else if (k >= next[i - f] - i) {
+                k -= next[i - f] - i;
+                i = next[i - f];
             } else {
                 ans.append(ca[i]);
                 i++;
             }
         }
-        while (k > 0) {
-            ans.deleteCharAt(ans.length() - 1);
-            k--;
+
+        //如果字符串增序排列,则从串尾部开始删除
+        if (k < ans.length()) {
+            ans.delete(ans.length() - k, ans.length());
+        } else {
+            return "0";
         }
-        return ans.length() == 0 ? "0" : ans.toString();
+        return ans.toString();
+    }
+
+    /**
+     * https://leetcode.cn/problems/subarray-sum-equals-k/?envType=study-plan-v2&envId=top-100-liked
+     *
+     * @param nums
+     * @param k
+     * @return
+     */
+    public int subarraySum(int[] nums, int k) {
+        int len = nums.length, count = 0;
+        int[] sum = new int[len + 1];
+        Map<Integer, Integer> m = new HashMap<>();
+        m.put(0, 1);
+        for (int i = 1; i <= len; i++) {
+            sum[i] = sum[i - 1] + nums[i - 1];
+            if (m.containsKey(sum[i])) {
+                m.put(sum[i], m.get(sum[i]) + 1);
+            } else {
+                m.put(sum[i], 1);
+            }
+        }
+        for (int i = 0; i <= len; i++) {
+            if (m.containsKey(k + sum[i])) {
+                count += m.get(sum[i] + k);
+                if (k == 0) {
+                    count--;
+                }
+            }
+            m.put(sum[i], m.get(sum[i]) - 1);
+        }
+        return count;
+    }
+
+    /**
+     * https://leetcode.cn/problems/binary-tree-level-order-traversal/?envType=study-plan-v2&envId=top-100-liked
+     *
+     * @param root
+     * @return
+     */
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        List<List<Integer>> ans = new ArrayList<>();
+        Queue<TreeNode> q = new LinkedList<>();
+        q.offer(root);
+        while (!q.isEmpty()) {
+            List<Integer> l = new ArrayList<>();
+            int size = q.size();
+            for (int i = 0; i < size; i++) {
+                TreeNode n = q.poll();
+                l.add(n.val);
+                if (n.left != null) {
+                    q.offer(n.left);
+                }
+                if (n.right != null) {
+                    q.offer(n.right);
+                }
+            }
+            ans.add(l);
+        }
+        return ans;
+    }
+
+    /**
+     * https://leetcode.cn/problems/swap-nodes-in-pairs/?envType=study-plan-v2&envId=top-100-liked
+     *
+     * @param head
+     * @return
+     */
+    public ListNode swapPairs(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode f = head, b = head.next, pre = null;
+        head = b;
+        while (f != null && b != null) {
+            ListNode tmp = b.next;
+            if (pre != null) {
+                pre.next = b;
+            }
+            b.next = f;
+            f.next = tmp;
+
+            pre = f;
+            f = tmp;
+            if (f == null) {
+                break;
+            }
+            b = f.next;
+        }
+        return head;
+    }
+
+    /**
+     * https://leetcode.cn/problems/rotting-oranges/?envType=study-plan-v2&envId=top-100-liked
+     *
+     * @param grid
+     * @return
+     */
+    public int orangesRotting(int[][] grid) {
+        row = grid.length;
+        col = grid[0].length;
+        int[][] status = new int[row][col];
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (grid[i][j] == 0 || grid[i][j] == 2) {
+                    status[i][j] = 0;
+                } else {
+                    status[i][j] = Integer.MAX_VALUE;
+                }
+            }
+        }
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (grid[i][j] == 2) {
+                    dfs(status, i, j);
+                }
+            }
+        }
+        int max = Integer.MIN_VALUE;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                max = Math.max(status[i][j], max);
+            }
+        }
+        return max == Integer.MAX_VALUE ? -1 : max;
+    }
+
+    private void dfs(int[][] status, int i, int j) {
+        int s = status[i][j];
+        if (i + 1 < row) {
+            if (status[i + 1][j] > s + 1) {
+                status[i + 1][j] = s + 1;
+                dfs(status, i + 1, j);
+            }
+        }
+        if (j + 1 < col) {
+            if (status[i][j + 1] > s + 1) {
+                status[i][j + 1] = s + 1;
+                dfs(status, i, j + 1);
+            }
+        }
+        if (j - 1 >= 0) {
+            if (status[i][j - 1] > s + 1) {
+                status[i][j - 1] = s + 1;
+                dfs(status, i, j - 1);
+            }
+        }
+        if (i - 1 >= 0) {
+            if (status[i - 1][j] > s + 1) {
+                status[i - 1][j] = s + 1;
+                dfs(status, i - 1, j);
+            }
+        }
     }
 
     public static void main(String[] args) {
         LeetCodeCommon l = new LeetCodeCommon();
-        String board;
-//        board = l.removeKdigits("1432219", 3);
-        board = l.removeKdigits("10200", 1);
-//        board = l.removeKdigits("10", 1);
+        int board;
+        board = l.orangesRotting(new int[][]{{0, 2}});
         System.out.println("ans:" + board);
     }
 }
