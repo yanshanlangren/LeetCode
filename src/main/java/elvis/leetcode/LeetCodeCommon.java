@@ -5,6 +5,7 @@ import elvis.leetcode.model.ListNode;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class LeetCodeCommon {
     public int maxProfit(int[] prices) {
@@ -2046,10 +2047,90 @@ public class LeetCodeCommon {
         }
     }
 
+    /**
+     * https://leetcode.cn/problems/find-all-people-with-secret/
+     *
+     * @param n
+     * @param meetings
+     * @param firstPerson
+     * @return
+     */
+    public List<Integer> findAllPeople(int n, int[][] meetings, int firstPerson) {
+        p = new int[n];
+        for (int i = 0; i < n; i++) {
+            p[i] = i;
+        }
+        p[firstPerson] = 0;
+        List<Integer> ans = new ArrayList<>();
+//        ans.add(0);
+//        ans.add(firstPerson);
+        Map<Integer, List<Integer[]>> mMap = new TreeMap<>();
+        for (int[] m : meetings) {
+            List<Integer[]> l = mMap.getOrDefault(m[2], new ArrayList<>());
+            l.add(new Integer[]{m[0], m[1]});
+            mMap.put(m[2], l);
+        }
+        for (Integer time : mMap.keySet()) {
+            for (Integer[] m : mMap.get(time)) {
+                merge(m[0], m[1]);
+            }
+            for (Integer[] m : mMap.get(time)) {
+                if (find(0) != find(m[0]) && find(0) != find(m[1])) {
+                    p[m[0]] = m[0];
+                    p[m[1]] = m[1];
+                }
+            }
+        }
+        for (int i = 0; i < n; i++) {
+            if (find(i) == find(0)) {
+                ans.add(i);
+            }
+        }
+
+        return ans;
+    }
+
+    int[] p;
+
+    private void merge(int a, int b) {
+        p[find(a)] = find(b);
+    }
+
+    private int find(int a) {
+        return a == p[a] ? a : (p[a] = find(p[a]));
+    }
+
+    /**
+     * https://leetcode.cn/problems/UlBDOe/
+     *
+     * @param leaves
+     * @return
+     */
+    public int minimumOperations(String leaves) {
+        int len = leaves.length();
+        int[][] dp = new int[3][len + 1];
+        char[] ca = leaves.toCharArray();
+        dp[0][0] = 0;
+        for (int i = 1; i <= len; i++) {
+            dp[0][i] = dp[0][i - 1] + (ca[i - 1] == 'r' ? 0 : 1);
+        }
+        dp[1][2] = dp[0][1] + (ca[1] == 'r' ? 1 : 0);
+        for (int i = 3; i <= len; i++) {
+            dp[1][i] = Math.min(dp[0][i - 1], dp[1][i - 1]);
+            dp[1][i] += ca[i - 1] == 'r' ? 1 : 0;
+        }
+        dp[2][3] = dp[1][2] + (ca[2] == 'r' ? 0 : 1);
+        for (int i = 4; i <= len; i++) {
+            dp[2][i] += Math.min(dp[1][i - 1], dp[2][i - 1]);
+            dp[2][i] += ca[i - 1] == 'r' ? 0 : 1;
+        }
+        return dp[2][len];
+    }
+
     public static void main(String[] args) {
         LeetCodeCommon l = new LeetCodeCommon();
-        int board;
-        board = l.orangesRotting(new int[][]{{0, 2}});
-        System.out.println("ans:" + board);
+//        int a = l.minimumOperations("rrryyyrryyyrr");
+        int a = l.minimumOperations("yry");
+        System.out.println("ans:" + JSONObject.toJSON(a));
     }
 }
