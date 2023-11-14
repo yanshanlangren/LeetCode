@@ -5,7 +5,6 @@ import elvis.leetcode.model.ListNode;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 public class LeetCodeCommon {
     public int maxProfit(int[] prices) {
@@ -917,60 +916,14 @@ public class LeetCodeCommon {
         return null;
     }
 
-    public void fastSort(int[] score, int start, int end, int[] sort) {
-        int h = end, l = start;
-        while (l < h) {
 
-        }
-    }
+//    Map<String, String> fa;
+//    Map<String, Double> cal;
+//
+//    public double calc(String a) {
+//        return fa.get(a).equals(a) ? 1.0 : cal.get(a) * calc(fa.get(a));
+//    }
 
-    Map<String, String> fa;
-    Map<String, Double> cal;
-
-    public String find(String a) {
-        return fa.get(a).equals(a) ? a : find(fa.get(a));
-    }
-
-    public double calc(String a) {
-        return fa.get(a).equals(a) ? 1.0 : cal.get(a) * calc(fa.get(a));
-    }
-
-    public void merge(String a, String b) {
-
-    }
-
-    public double[] calcEquation(List<List<String>> equations, double[] values, List<List<String>> queries) {
-        fa = new HashMap<>();
-        cal = new HashMap<>();
-        for (int i = 0; i < equations.size(); i++) {
-            List<String> eq = equations.get(i);
-            String s0 = eq.get(0);
-            String s1 = eq.get(1);
-            if (!fa.containsKey(s1)) {
-                fa.put(s1, s0);
-                cal.put(s0, values[i]);
-            } else {
-
-            }
-            if (!fa.containsKey(s0)) {
-                fa.put(s0, s0);
-                cal.put(s0, 1.0);
-            }
-        }
-        double[] res = new double[queries.size()];
-        for (int i = 0; i < queries.size(); i++) {
-            List<String> query = queries.get(i);
-            String s0 = query.get(0);
-            String s1 = query.get(1);
-            if (!fa.containsKey(s0) || !fa.containsKey(s1)) {
-                res[i] = -1.0;
-            }
-            if (find(s0).equals(find(s1))) {
-                res[i] = calc(s0) / calc(s1);
-            }
-        }
-        return res;
-    }
 
     /**
      * 农行编码比赛原题
@@ -2127,10 +2080,413 @@ public class LeetCodeCommon {
         return dp[2][len];
     }
 
+    /**
+     * https://leetcode.cn/problems/shortest-unsorted-continuous-subarray/
+     *
+     * @param nums
+     * @return
+     */
+    public int findUnsortedSubarray(int[] nums) {
+        int len = nums.length;
+        int l = 0, r = len - 1;
+        Stack<Integer> s = new Stack<>();
+        s.push(0);
+        int[] next = new int[len];
+        Arrays.fill(next, -1);
+        for (int i = 1; i < len; i++) {
+            while (!s.isEmpty() && nums[s.peek()] > nums[i]) {
+                next[s.pop()] = i;
+            }
+            s.push(i);
+        }
+        while (l < len && next[l] == -1) {
+            l++;
+        }
+        if (l == len) {
+            return 0;
+        }
+
+        s.clear();
+        int[] before = new int[len];
+        Arrays.fill(before, -1);
+        s.push(len - 1);
+        for (int i = len - 1; i >= 0; i--) {
+            while (!s.isEmpty() && nums[s.peek()] < nums[i]) {
+                before[s.pop()] = i;
+            }
+            s.push(i);
+        }
+        while (r >= 0 && before[r] == -1) {
+            r--;
+        }
+        return r - l + 1;
+    }
+
+    /**
+     * https://leetcode.cn/problems/total-appeal-of-a-string/
+     *
+     * @param s
+     */
+    public long appealSum(String s) {
+        char[] ca = s.toCharArray();
+        int len = s.length();
+        int tot = 0;
+        int[] window = new int[26];
+        long count = 0L;
+        count += len;
+        for (int i = 2; i <= len; i++) {
+            Arrays.fill(window, 0);
+            tot = 0;
+            for (int j = 0; j < i; j++) {
+                if (window[ca[j] - 'a']++ == 0) {
+                    tot++;
+                }
+            }
+            count += tot;
+            for (int j = 1; j + i <= len; j++) {
+                if (window[ca[j - 1] - 'a']-- == 1) {
+                    tot--;
+                }
+                if (window[ca[i + j - 1] - 'a']++ == 0) {
+                    tot++;
+                }
+                count += tot;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * https://leetcode.cn/problems/merge-intervals/?envType=study-plan-v2&envId=top-100-liked
+     *
+     * @param intervals
+     * @return
+     */
+    public int[][] merge(int[][] intervals) {
+        List<Integer[]> list = new ArrayList<>();
+        for (int[] interval : intervals) {
+            list.add(new Integer[]{interval[0], interval[1]});
+        }
+        int i = 0;
+        for (; i < list.size() - 1; ) {
+            Integer[] a = list.get(i);
+            Integer[] b = list.get(i + 1);
+            if (b[0] <= a[1]) {
+                a[1] = b[1];
+                list.remove(i + 1);
+            } else {
+                i++;
+            }
+        }
+        return list.toArray(new int[0][0]);
+    }
+
+    /**
+     * d*d * k +1 = n*n
+     *
+     * @param x
+     * @return
+     */
+    public void question3(int x) {
+        for (int k = 1; k <= x; k++) {
+            for (int i = 1; i <= k + 2; i++) {
+                int n = k * i * i + 1;
+                int a = (int) (n / Math.pow((1.0) * n, 0.5));
+                if (a * a == n) {
+                    System.out.println("k:" + k + ", n:" + n);
+                    break;
+                }
+            }
+            System.out.println("k:" + k + ", n: -1");
+        }
+    }
+
+    /**
+     * https://leetcode.cn/problems/text-justification/
+     *
+     * @param words
+     * @param maxWidth
+     * @return
+     */
+    public List<String> fullJustify(String[] words, int maxWidth) {
+        List<String> ans = new ArrayList<>();
+        int len = words.length;
+        int[] wl = new int[len];
+        for (int i = 0; i < len; i++) {
+            wl[i] = words[i].length();
+        }
+        int i = 0, j = 0;
+        while (j < len) {
+            int tl = wl[i];
+            StringBuilder sb = new StringBuilder(words[i]);
+            j++;
+            while (j < len && tl < maxWidth) {
+                tl += wl[j++] + 1;
+            }
+            tl -= wl[--j] + 1;
+            int restSpace = maxWidth - tl;
+            int spaceEach = restSpace / (j - i - 1) + 1;
+            int moreSpaceCount = restSpace % (j - i - 1);
+            if (j < len - 1) {
+                for (int k = 0; k < moreSpaceCount; k++) {
+                    for (int l = 0; l < spaceEach + 1; l++) {
+                        sb.append(' ');
+                    }
+                    sb.append(words[i + k + 1]);
+                }
+                for (int k = i + moreSpaceCount + 1; k < j; k++) {
+                    for (int l = 0; l < spaceEach; l++) {
+                        sb.append(' ');
+                    }
+                    sb.append(words[k]);
+                }
+            } else {
+                for (int k = i + 1; k < len; k++) {
+                    sb.append(' ');
+                    sb.append(words[i + 1]);
+                }
+                int rs = maxWidth - sb.length();
+                for (int k = 0; k < rs; k++) {
+                    sb.append(' ');
+                }
+            }
+            ans.add(sb.toString());
+
+            j++;
+            i = j;
+        }
+        return ans;
+    }
+
+    /**
+     * https://leetcode.cn/problems/maximum-trailing-zeros-in-a-cornered-path/
+     *
+     * @param grid
+     * @return
+     */
+    public int maxTrailingZeros(int[][] grid) {
+        //乘数后的每个0可分解为:所有数中10的数量累加n,2的个数a,  5的个数b, 10的个数为n+Math.min(a,b)
+        //从左往右遍历每个节点左侧(包括节点本身)10的个数,2的个数,5的个数
+        //从上往下遍历每个节点上方(包括节点本身)10的个数,2的个数,5的个数
+        //从右往左遍历每个节点右侧(包括节点本身)10的个数,2的个数,5的个数
+        //从下往上遍历每个节点下方(包括节点本身)10的个数,2的个数,5的个数
+        int row = grid.length, col = grid[0].length;
+        //3维数组中第一位表示行,第二位表示列,第三位0表示10的个数,1表示2的个数,2表示5的个数
+        int[][][] left = new int[row][col][3];
+        int[][][] right = new int[row][col][3];
+        int[][][] up = new int[row][col][3];
+        int[][][] down = new int[row][col][3];
+        int[][][] cur = new int[row][col][3];
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                int num = grid[i][j];
+                int c10 = 0, c2 = 0, c5 = 0;
+                while (num % 10 == 0) {
+                    num /= 10;
+                    c10++;
+                }
+                while (num % 5 == 0) {
+                    num /= 5;
+                    c5++;
+                }
+                while (num % 2 == 0) {
+                    num /= 2;
+                    c2++;
+                }
+                cur[i][j][0] = c10;
+                cur[i][j][1] = c5;
+                cur[i][j][2] = c2;
+                left[i][j][0] = c10;
+                left[i][j][1] = c5;
+                left[i][j][2] = c2;
+                up[i][j][0] = c10;
+                up[i][j][1] = c5;
+                up[i][j][2] = c2;
+                if (i > 0) {
+                    up[i][j][0] += up[i - 1][j][0];
+                    up[i][j][1] += up[i - 1][j][1];
+                    up[i][j][2] += up[i - 1][j][2];
+                }
+                if (j > 0) {
+                    left[i][j][0] += left[i][j - 1][0];
+                    left[i][j][1] += left[i][j - 1][1];
+                    left[i][j][2] += left[i][j - 1][2];
+                }
+            }
+        }
+
+        for (int i = row - 1; i >= 0; i--) {
+            for (int j = col - 1; j >= 0; j--) {
+                int num = grid[i][j];
+                int c10 = 0, c2 = 0, c5 = 0;
+                while (num % 10 == 0) {
+                    num /= 10;
+                    c10++;
+                }
+                while (num % 5 == 0) {
+                    num /= 5;
+                    c5++;
+                }
+                while (num % 2 == 0) {
+                    num /= 2;
+                    c2++;
+                }
+                right[i][j][0] = c10;
+                right[i][j][1] = c5;
+                right[i][j][2] = c2;
+                down[i][j][0] = c10;
+                down[i][j][1] = c5;
+                down[i][j][2] = c2;
+                if (i < row - 1) {
+                    down[i][j][0] += down[i + 1][j][0];
+                    down[i][j][1] += down[i + 1][j][1];
+                    down[i][j][2] += down[i + 1][j][2];
+                }
+                if (j < col - 1) {
+                    right[i][j][0] += right[i][j + 1][0];
+                    right[i][j][1] += right[i][j + 1][1];
+                    right[i][j][2] += right[i][j + 1][2];
+                }
+            }
+        }
+        int max = 0;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                //上左
+                max = Math.max(max, up[i][j][0] + left[i][j][0] - cur[i][j][0] + Math.min(up[i][j][1] + left[i][j][1] - cur[i][j][1], up[i][j][2] + left[i][j][2] - cur[i][j][2]));
+                //上右
+                max = Math.max(max, up[i][j][0] + right[i][j][0] - cur[i][j][0] + Math.min(up[i][j][1] + right[i][j][1] - cur[i][j][1], up[i][j][2] + right[i][j][2] - cur[i][j][2]));
+                //下左
+                max = Math.max(max, down[i][j][0] + left[i][j][0] - cur[i][j][0] + Math.min(down[i][j][1] + left[i][j][1] - cur[i][j][1], down[i][j][2] + left[i][j][2] - cur[i][j][2]));
+                //下右
+                max = Math.max(max, down[i][j][0] + right[i][j][0] - cur[i][j][0] + Math.min(down[i][j][1] + right[i][j][1] - cur[i][j][1], down[i][j][2] + right[i][j][2] - cur[i][j][2]));
+            }
+        }
+        return max;
+
+    }
+
+    /**
+     * https://leetcode.cn/problems/tree-of-coprimes/
+     *
+     * @param nums
+     * @param edges
+     * @return
+     */
+    public int[] getCoprimes(int[] nums, int[][] edges) {
+        int len = nums.length;
+        List<Integer>[] c = new ArrayList[len];
+        boolean[] visited = new boolean[len];
+        ans = new int[len];
+        Arrays.fill(ans, -1);
+        this.nums = nums;
+        for (int i = 0; i < len; i++) {
+            c[i] = new ArrayList<>();
+        }
+        for (int[] e : edges) {
+            c[e[0]].add(e[1]);
+            c[e[1]].add(e[0]);
+        }
+        dfs(0, visited, c, new ArrayList<>());
+        return ans;
+    }
+
+    int[] ans;
+
+    private void dfs(int idx, boolean[] visited, List<Integer>[] conn, List<Integer> ancestor) {
+        visited[idx] = true;
+        //从祖节点里面找到互质节点
+        for (int j = ancestor.size() - 1; j >= 0; j--) {
+            if (maxFormula(nums[idx], nums[ancestor.get(j)]) == 1) {
+                Integer next = ancestor.get(j);
+                ans[idx] = next;
+                break;
+            }
+        }
+
+        //遍历子节点
+        ancestor.add(idx);
+        for (int i = 0; i < conn[idx].size(); i++) {
+            if (visited[conn[idx].get(i)]) {
+                continue;
+            }
+            dfs(conn[idx].get(i), visited, conn, ancestor);
+        }
+        ancestor.remove(ancestor.size() - 1);
+    }
+
+    /**
+     * 求最大公约数
+     *
+     * @param x
+     * @param y
+     * @return
+     */
+    private int maxFormula(int x, int y) {
+        int a = Math.max(x, y);
+        int b = Math.min(x, y);
+        while (a % b != 0) {
+            int t1 = a - b;
+            int t2 = b;
+            a = Math.max(t1, t2);
+            b = Math.min(t1, t2);
+        }
+        return b;
+    }
+
+    public int closedIslandBfs(int[][] grid) {
+        int row = grid.length;
+        int col = grid[0].length;
+        boolean[][] visited = new boolean[row][col];
+        Queue<Integer[]> q = new LinkedList<>();
+        int count = 0;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                //陆地没有访问过则开始bfs
+                if (!visited[i][j] && grid[i][j] == 0) {
+                    boolean flag = false;
+                    q.offer(new Integer[]{i, j});
+                    while (!q.isEmpty()) {
+                        int sz = q.size();
+                        for (int k = 0; k < sz; k++) {
+                            Integer[] idx = q.poll();
+                            int x = idx[0], y = idx[1];
+                            //达到边界,节点不是被水环绕
+                            if (x == 0 || x == row - 1 || y == 0 || y == col - 1) {
+                                flag = true;
+                            }
+                            visited[x][y] = true;
+                            //四周围未访问的陆地节点入队列
+                            if (x + 1 < row && grid[x + 1][y] == 0 && !visited[x + 1][y]) {
+                                q.offer(new Integer[]{x + 1, y});
+                            }
+                            if (y + 1 < col && grid[x][y + 1] == 0 && !visited[x][y + 1]) {
+                                q.offer(new Integer[]{x, y + 1});
+                            }
+                            if (x - 1 >= 0 && grid[x - 1][y] == 0 && !visited[x - 1][y]) {
+                                q.offer(new Integer[]{x - 1, y});
+                            }
+                            if (y - 1 >= 0 && grid[x][y - 1] == 0 && !visited[x][y - 1]) {
+                                q.offer(new Integer[]{x, y - 1});
+                            }
+                        }
+                    }
+                    if (!flag) {
+                        System.out.println("i:" + i + ",j:" + j);
+                        count++;
+                    }
+                }
+            }
+        }
+        return count;
+    }
+
     public static void main(String[] args) {
         LeetCodeCommon l = new LeetCodeCommon();
-//        int a = l.minimumOperations("rrryyyrryyyrr");
-        int a = l.minimumOperations("yry");
-        System.out.println("ans:" + JSONObject.toJSON(a));
+//        int a = l.closedIsland(new int[][]{{0, 1, 1, 1, 1, 1, 1, 1}, {1, 0, 1, 0, 0, 0, 0, 1}, {1, 0, 1, 0, 0, 1, 0, 1}, {1, 0, 0, 0, 0, 1, 0, 1}, {1, 0, 0, 1, 0, 1, 0, 1}, {1, 1, 0, 1, 0, 0, 0, 1}, {1, 0, 0, 0, 0, 0, 0, 1}, {0, 1, 1, 1, 1, 1, 1, 1}});
+//        int a = l.closedIsland(new int[][]{{1, 1, 1, 1, 1, 1, 1}, {1, 0, 0, 0, 0, 0, 1}, {1, 0, 1, 1, 1, 0, 1}, {1, 0, 1, 0, 1, 0, 1}, {1, 0, 1, 1, 1, 0, 1}, {1, 0, 0, 0, 0, 0, 1}, {1, 1, 1, 1, 1, 1, 1}});
+//        int a = l.closedIsland(new int[][]{{0, 1, 1, 1, 0}, {1, 0, 1, 0, 1}, {1, 0, 1, 0, 1}, {1, 0, 0, 0, 1}, {0, 1, 1, 1, 0}});
+//        int a = l.closedIsland(new int[][]{{0, 0, 1, 1, 0, 1, 0, 0, 1, 0}, {1, 1, 0, 1, 1, 0, 1, 1, 1, 0}, {1, 0, 1, 1, 1, 0, 0, 1, 1, 0}, {0, 1, 1, 0, 0, 0, 0, 1, 0, 1}, {0, 0, 0, 0, 0, 0, 1, 1, 1, 0}, {0, 1, 0, 1, 0, 1, 0, 1, 1, 1}, {1, 0, 1, 0, 1, 1, 0, 0, 0, 1}, {1, 1, 1, 1, 1, 1, 0, 0, 0, 0}, {1, 1, 1, 0, 0, 1, 0, 1, 0, 1}, {1, 1, 1, 0, 1, 1, 0, 1, 1, 0}});
+//        System.out.println("ans:" + JSONObject.toJSON(a));
     }
 }
