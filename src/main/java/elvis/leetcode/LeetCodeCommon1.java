@@ -241,43 +241,29 @@ public class LeetCodeCommon1 {
      */
     public int wiggleMaxLength(int[] nums) {
         int len = nums.length;
-        //动规数组,[0,i]表示以nums[i-1]为正摆动结尾的最大长度
-        //[1,i]表示以nums[i]为负摆动结尾的最大长度
+        //动规数组,[0,i]表示以0到i为正摆动结尾的最大长度
+        //[1,i]表示以0到i为负摆动结尾的最大长度
         int[][] dp = new int[2][len];
         dp[0][0] = 1;
         dp[1][0] = 1;
-        //单调增栈以提示上一个比当前数小的数的位置
-        Stack<Integer> si = new Stack<>();
-        si.push(0);
-        //单调减栈以提示上一个比当前数大的数的位置
-        Stack<Integer> sd = new Stack<>();
-        sd.push(0);
         for (int i = 1; i < len; i++) {
-            //推出所有比当前数大的数
-            while (!si.isEmpty() && nums[si.peek()] >= nums[i]) {
-                si.pop();
+            //向上摆动时,从向下摆动里搜索最大
+            for (int j = 0; j < i; j++) {
+                //上摆
+                if (nums[i] > nums[j]) {
+                    dp[0][i] = Math.max(dp[0][i], dp[1][j] + 1);
+                    dp[0][i] = Math.max(dp[0][i], dp[0][j]);
+                }
+                //下摆
+                if (nums[i] < nums[j]) {
+                    dp[1][i] = Math.max(dp[1][i], dp[0][j] + 1);
+                    dp[1][i] = Math.max(dp[1][i], dp[1][j]);
+                }
+                if (nums[i] == nums[j]) {
+                    dp[0][i] = Math.max(dp[0][i], dp[0][j]);
+                    dp[1][i] = Math.max(dp[1][i], dp[1][j]);
+                }
             }
-            //栈为空时,表示没有比当前数小的数,idx = 0;
-            if (si.isEmpty()) {
-                dp[0][i] = 1;
-            } else {
-                dp[0][i] = dp[1][si.peek()] + 1;
-                System.out.println("增:" + nums[si.peek()] + "->" + nums[i] + ",长度:" + dp[0][i]);
-            }
-            //i 入单调增栈
-            si.push(i);
-            //推出所有比当前数小的数
-            while (!sd.isEmpty() && nums[sd.peek()] <= nums[i]) {
-                sd.pop();
-            }
-            if (sd.isEmpty()) {
-                System.out.println("减:new " + nums[i]);
-                dp[1][i] = 1;
-            } else {
-                dp[1][i] = dp[0][sd.peek()] + 1;
-                System.out.println("减:" + nums[sd.peek()] + "->" + nums[i] + ",长度:" + dp[1][i]);
-            }
-            sd.push(i);
         }
         return Math.max(dp[0][len - 1], dp[1][len - 1]);
     }
